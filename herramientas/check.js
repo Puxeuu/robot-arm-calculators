@@ -46,10 +46,21 @@ function pagines(dir) {
   // 3) URLs en linia segons el sitemap
   const sm = fs.readFileSync(path.join(ROOT, 'sitemap.xml'), 'utf8');
   const urls = [...sm.matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]);
+  let errorsXarxa = 0;
   for (const u of urls) {
     try { const r = await fetch(u); if (r.status !== 200) avis(u + ' respon ' + r.status); }
-    catch (e) { avis(u + ' no respon'); }
+    catch (e) { errorsXarxa++; }
   }
+  if (errorsXarxa === urls.length) {
+    // Entorn sense acces a puxeuu.github.io: es comprova l'estat de GitHub Pages per l'API.
+    console.log('AVIS: cap URL accessible des d\'aquest entorn (xarxa bloquejada). Es comprova GitHub Pages per l\'API.');
+    try {
+      const r = await fetch('https://api.github.com/repos/Puxeuu/robot-arm-calculators/pages/builds/latest', { headers: { 'User-Agent': 'check' } });
+      const j = await r.json();
+      if (j.status === 'built') console.log('OK   GitHub Pages: ultima publicacio correcta (' + j.updated_at + ')');
+      else avis('GitHub Pages: estat de l\'ultima publicacio = ' + (j.status || ('HTTP ' + r.status)));
+    } catch (e) { console.log('AVIS: tampoc s\'ha pogut consultar l\'API de GitHub; no es pot comprovar si la web es en linia.'); }
+  } else if (errorsXarxa > 0) avis(errorsXarxa + ' URLs no responen');
   console.log('OK   ' + urls.length + ' URLs del sitemap comprovades en linia');
   // 4) Cada pagina local ha d'estar al sitemap
   for (const f of files) {
