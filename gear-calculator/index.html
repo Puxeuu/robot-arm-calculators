@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gear Ratio and Motor Calculator (torque, speed, power)</title>
+<meta name="description" content="Free calculator for a DC motor with a gearbox: output torque, speed and power, operating point under load, and the gear ratio you need for a given torque.">
+<style>
+:root{--bg:#fff;--fg:#1b1f24;--mut:#5b6672;--card:#f4f6f8;--line:#d8dee4;--acc:#0b6bcb;--bad:#c2410c}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1317;--fg:#e6eaee;--mut:#97a3af;--card:#171d23;--line:#2a323a;--acc:#58a6ff;--bad:#fb923c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:1.6rem;margin:.2em 0}h2{font-size:1.15rem;margin:1.4em 0 .5em}
+.sub{color:var(--mut);margin:0 0 12px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label{display:flex;flex-direction:column;font-size:.8rem;color:var(--mut);gap:3px}
+input,select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;min-width:0}
+.big{font-size:1.3rem;font-weight:700}.warn{color:var(--bad)}.small{font-size:.85rem;color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+td{padding:6px 8px;border-bottom:1px solid var(--line)}td:last-child{text-align:right;font-weight:600}
+svg{width:100%;height:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:700px){.twocol{grid-template-columns:1fr}}
+a{color:var(--acc)}
+</style>
+</head>
+<body>
+<main>
+<div class="top">
+  <div><h1 data-i="title"></h1><p class="sub" data-i="sub"></p></div>
+  <select id="lang" aria-label="Language"><option value="en">English</option><option value="ca">Català</option><option value="es">Español</option></select>
+</div>
+
+<h2 data-i="h1"></h2>
+<div class="card"><div class="grid">
+  <label><span data-i="ts"></span><input id="Ts" type="number" min="0" step="any" value="0.5"></label>
+  <label><span data-i="n0"></span><input id="n0" type="number" min="1" value="6000"></label>
+  <label><span data-i="ratio"></span><input id="ratio" type="number" min="1" step="any" value="50"></label>
+  <label><span data-i="eff"></span><input id="eff" type="number" min="1" max="100" value="80"></label>
+  <label><span data-i="tl"></span><input id="Tl" type="number" min="0" step="any" value="10"></label>
+</div></div>
+<div class="twocol">
+  <div class="card" id="res"></div>
+  <div><svg id="chart" viewBox="0 0 400 300" role="img"></svg></div>
+</div>
+
+<h2 data-i="h2"></h2>
+<div class="card"><div class="grid">
+  <label><span data-i="treq"></span><input id="Treq" type="number" min="0" step="any" value="10"></label>
+  <label><span data-i="tc"></span><input id="Tc" type="number" min="0.0001" step="any" value="0.1"></label>
+  <label><span data-i="sf"></span><input id="sf" type="number" min="1" step="0.1" value="1.5"></label>
+</div><p class="big" id="req" style="margin:10px 0 0"></p></div>
+
+<h2 data-i="howto"></h2>
+<div class="card small" id="doc"></div>
+</main>
+<script src="gear.js"></script>
+<script>
+var T = {
+ en:{title:"Gear Ratio and Motor Calculator",sub:"DC motor with a gearbox: output torque, speed and power, and the ratio you need.",
+  h1:"Motor with gearbox",ts:"Motor stall torque (N·m)",n0:"Motor no-load speed (rpm)",ratio:"Gear ratio (x:1)",eff:"Gearbox efficiency (%)",tl:"Load torque at output (N·m)",
+  h2:"Ratio you need",treq:"Torque needed at the joint (N·m)",tc:"Motor continuous torque (N·m)",sf:"Safety factor",
+  howto:"How it works",res:"Result",out:"Output torque at stall",outn:"Output speed, no load",
+  opt:"At your load",mt:"Motor torque",ms:"Motor speed",os:"Output speed",po:"Output power",pi:"Electrical-mech. input power",
+  cant:"The motor cannot move this load. The output stall torque is ",need:"Minimum ratio: ",rpmo:"rpm",
+  doc:"<p><b>Model:</b> the DC motor follows a straight torque-speed line from stall torque (zero speed) to no-load speed (zero torque). A gearbox of ratio i with efficiency η gives T<sub>out</sub> = T<sub>motor</sub>·i·η and n<sub>out</sub> = n<sub>motor</sub>/i. The efficiency is applied to torque only.</p><p><b>Operating point:</b> for a load torque T<sub>L</sub> the motor torque is T<sub>L</sub>/(i·η) and its speed is n<sub>0</sub>·(1 − T<sub>motor</sub>/T<sub>stall</sub>). Power out = T<sub>L</sub>·ω<sub>out</sub>.</p><p><b>Ratio you need:</b> i = T·SF / (T<sub>cont</sub>·η). Use the <em>continuous</em> torque of the motor, not the stall torque, or it will overheat. Take the torque from the <a href='../torque-calculator/'>joint torque calculator</a>.</p><p>Not included: friction, inertia, backlash, thermal limits and supply voltage sag. Units: N·m, rpm, W.</p>"},
+ ca:{title:"Calculador de reductor i motor",sub:"Motor DC amb reductor: parell, velocitat i potència de sortida, i la relació que necessites.",
+  h1:"Motor amb reductor",ts:"Parell de calat del motor (N·m)",n0:"Velocitat en buit del motor (rpm)",ratio:"Relació del reductor (x:1)",eff:"Rendiment del reductor (%)",tl:"Parell de càrrega a la sortida (N·m)",
+  h2:"Relació que necessites",treq:"Parell necessari a l'articulació (N·m)",tc:"Parell continu del motor (N·m)",sf:"Factor de seguretat",
+  howto:"Com funciona",res:"Resultat",out:"Parell de sortida en calat",outn:"Velocitat de sortida, en buit",
+  opt:"Amb la teva càrrega",mt:"Parell del motor",ms:"Velocitat del motor",os:"Velocitat de sortida",po:"Potència de sortida",pi:"Potència d'entrada",
+  cant:"El motor no pot moure aquesta càrrega. El parell de calat a la sortida és ",need:"Relació mínima: ",rpmo:"rpm",
+  doc:"<p><b>Model:</b> el motor DC segueix una recta parell-velocitat des del parell de calat (velocitat zero) fins a la velocitat en buit (parell zero). Un reductor de relació i i rendiment η dona T<sub>sortida</sub> = T<sub>motor</sub>·i·η i n<sub>sortida</sub> = n<sub>motor</sub>/i. El rendiment s'aplica només al parell.</p><p><b>Punt de funcionament:</b> per a una càrrega T<sub>L</sub> el parell del motor és T<sub>L</sub>/(i·η) i la seva velocitat és n<sub>0</sub>·(1 − T<sub>motor</sub>/T<sub>calat</sub>). Potència de sortida = T<sub>L</sub>·ω<sub>sortida</sub>.</p><p><b>Relació necessària:</b> i = T·FS / (T<sub>cont</sub>·η). Usa el parell <em>continu</em> del motor, no el de calat, o s'escalfarà. El parell el pots treure del <a href='../torque-calculator/'>calculador de parell d'articulació</a>.</p><p>No inclou: fricció, inèrcia, joc, límits tèrmics ni caiguda de tensió. Unitats: N·m, rpm, W.</p>"},
+ es:{title:"Calculadora de reductor y motor",sub:"Motor DC con reductor: par, velocidad y potencia de salida, y la relación que necesitas.",
+  h1:"Motor con reductor",ts:"Par de calado del motor (N·m)",n0:"Velocidad en vacío del motor (rpm)",ratio:"Relación del reductor (x:1)",eff:"Rendimiento del reductor (%)",tl:"Par de carga en la salida (N·m)",
+  h2:"Relación que necesitas",treq:"Par necesario en la articulación (N·m)",tc:"Par continuo del motor (N·m)",sf:"Factor de seguridad",
+  howto:"Cómo funciona",res:"Resultado",out:"Par de salida en calado",outn:"Velocidad de salida, en vacío",
+  opt:"Con tu carga",mt:"Par del motor",ms:"Velocidad del motor",os:"Velocidad de salida",po:"Potencia de salida",pi:"Potencia de entrada",
+  cant:"El motor no puede mover esta carga. El par de calado en la salida es ",need:"Relación mínima: ",rpmo:"rpm",
+  doc:"<p><b>Modelo:</b> el motor DC sigue una recta par-velocidad desde el par de calado (velocidad cero) hasta la velocidad en vacío (par cero). Un reductor de relación i y rendimiento η da T<sub>salida</sub> = T<sub>motor</sub>·i·η y n<sub>salida</sub> = n<sub>motor</sub>/i. El rendimiento se aplica solo al par.</p><p><b>Punto de funcionamiento:</b> para una carga T<sub>L</sub> el par del motor es T<sub>L</sub>/(i·η) y su velocidad es n<sub>0</sub>·(1 − T<sub>motor</sub>/T<sub>calado</sub>). Potencia de salida = T<sub>L</sub>·ω<sub>salida</sub>.</p><p><b>Relación necesaria:</b> i = T·FS / (T<sub>cont</sub>·η). Usa el par <em>continuo</em> del motor, no el de calado, o se calentará. El par lo puedes sacar de la <a href='../torque-calculator/'>calculadora de par de articulación</a>.</p><p>No incluye: fricción, inercia, holgura, límites térmicos ni caída de tensión. Unidades: N·m, rpm, W.</p>"}
+};
+var lang=(function(){var l;try{l=localStorage.getItem('lang')}catch(e){}return l||(navigator.language||'en').slice(0,2)})();
+if(!T[lang]) lang='en';
+function $(i){return document.getElementById(i)} function t(k){return T[lang][k]}
+function num(x,d){var v=parseFloat(x);return isFinite(v)?v:d}
+function f(x,n){return x.toFixed(n)}
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-i]').forEach(function(e){e.textContent=t(e.getAttribute('data-i'))});
+  $('doc').innerHTML=t('doc'); $('lang').value=lang; document.title=t('title'); calc();
+}
+function calc(){
+  var Ts=Math.max(0,num($('Ts').value,0)), n0=Math.max(1,num($('n0').value,1)), i=Math.max(1,num($('ratio').value,1));
+  var eff=Math.min(1,Math.max(0.01,num($('eff').value,80)/100)), Tl=Math.max(0,num($('Tl').value,0));
+  var stallOut=Ts*i*eff, nOut0=n0/i;
+  var h='<table><tr><td>'+t('out')+'</td><td>'+f(stallOut,3)+' N·m</td></tr><tr><td>'+t('outn')+'</td><td>'+f(nOut0,1)+' '+t('rpmo')+'</td></tr></table>';
+  var p=Gear.operatingPoint(Ts,n0,i,eff,Tl);
+  if(!p){ h+='<p class="warn big">'+t('cant')+f(stallOut,3)+' N·m</p>'; }
+  else h+='<p><b>'+t('opt')+'</b></p><table><tr><td>'+t('mt')+'</td><td>'+f(p.Tm,4)+' N·m</td></tr><tr><td>'+t('ms')+'</td><td>'+f(p.nm,0)+' '+t('rpmo')+'</td></tr><tr><td>'+t('os')+'</td><td>'+f(p.n,2)+' '+t('rpmo')+'</td></tr><tr><td>'+t('po')+'</td><td>'+f(p.Pout,2)+' W</td></tr><tr><td>'+t('pi')+'</td><td>'+f(p.Pin,2)+' W</td></tr></table>';
+  $('res').innerHTML=h;
+  chart(stallOut,nOut0,p,Tl);
+  var Tr=Math.max(0,num($('Treq').value,0)), Tc=Math.max(1e-4,num($('Tc').value,0.1)), sf=Math.max(1,num($('sf').value,1));
+  $('req').textContent=t('need')+f(Gear.requiredRatio(Tr,Tc,eff,sf),1)+' : 1';
+}
+function chart(Ts,n0,p,Tl){
+  // eix X: velocitat de sortida (rpm); eix Y: parell de sortida (N·m)
+  var g='',X0=50,Y0=260,W=330,H=230, mx=Math.max(Ts,Tl,1e-9)*1.15, mn=Math.max(n0,1e-9);
+  function X(n){return X0+n/mn*W} function Y(T){return Y0-T/mx*H}
+  g+='<line x1="'+X0+'" y1="'+Y0+'" x2="'+(X0+W)+'" y2="'+Y0+'" stroke="currentColor" stroke-opacity=".4"/><line x1="'+X0+'" y1="'+Y0+'" x2="'+X0+'" y2="20" stroke="currentColor" stroke-opacity=".4"/>';
+  g+='<line x1="'+X(0)+'" y1="'+Y(Ts)+'" x2="'+X(n0)+'" y2="'+Y(0)+'" stroke="var(--acc)" stroke-width="3"/>';
+  if(Tl>0) g+='<line x1="'+X0+'" y1="'+Y(Tl)+'" x2="'+(X0+W)+'" y2="'+Y(Tl)+'" stroke="var(--bad)" stroke-dasharray="4"/>';
+  if(p) g+='<circle cx="'+X(p.n)+'" cy="'+Y(Tl)+'" r="5" fill="var(--bad)"/>';
+  g+='<text x="'+X0+'" y="14" font-size="11" fill="currentColor">N·m</text><text x="'+(X0+W)+'" y="296" font-size="11" text-anchor="end" fill="currentColor">rpm</text>';
+  g+='<text x="'+(X0+4)+'" y="'+(Y(Ts)-6)+'" font-size="10" fill="currentColor">'+f(Ts,2)+'</text><text x="'+X(n0)+'" y="'+(Y0+14)+'" font-size="10" text-anchor="middle" fill="currentColor">'+f(n0,0)+'</text>';
+  $('chart').innerHTML=g;
+}
+document.addEventListener('input',calc);
+$('lang').onchange=function(){lang=this.value;try{localStorage.setItem('lang',lang)}catch(e){};applyLang()};
+applyLang();
+</script>
+</body>
+</html>
