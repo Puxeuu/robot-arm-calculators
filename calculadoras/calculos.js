@@ -141,7 +141,31 @@
     acumulado: function (d1, d2) { return (1 - (1 - d1 / 100) * (1 - d2 / 100)) * 100; }
   };
 
-  var api = { imc: imc, calorias: calorias, difYMD: difYMD, diasEntreFechas: diasEntreFechas, proximoCumple: proximoCumple, prestamo: prestamo, dto: dto, addMonthsClamp: addMonthsClamp, hipoteca: hipoteca, ivaDesdeBase: ivaDesdeBase, ivaDesdeTotal: ivaDesdeTotal, pct: pct, interesCompuesto: interesCompuesto, despido: despido };
+
+  // ---------- Dates: sumar/restar, dies laborables, dia de la setmana ----------
+  // sign = +1 (sumar) o -1 (restar). Primer anys i mesos (amb clamp de final de mes), despres dies.
+  function sumarARestar(ms, anys, mesos, dies, sign) {
+    var r = addMonthsClamp(ms, sign * (anys * 12 + mesos));
+    return r + sign * dies * DAY;
+  }
+  function diaSemana(ms) { return new Date(ms).getUTCDay(); } // 0 = diumenge ... 6 = dissabte
+  // Dies de dilluns a divendres entre a i b, tots dos inclosos. No coneix festius.
+  function diasLaborables(a, b) {
+    if (b < a) return 0;
+    var total = Math.round((b - a) / DAY) + 1, n = 0, d0 = new Date(a).getUTCDay();
+    var full = Math.floor(total / 7); n = full * 5;
+    for (var i = 0; i < total % 7; i++) { var wd = (d0 + i) % 7; if (wd !== 0 && wd !== 6) n++; }
+    return n;
+  }
+  function diaDelAnyo(ms) { return Math.floor((ms - Date.UTC(new Date(ms).getUTCFullYear(), 0, 1)) / DAY) + 1; }
+  function semanaISO(ms) {
+    var day = (new Date(ms).getUTCDay() + 6) % 7, th = ms + (3 - day) * DAY;
+    var jan1 = Date.UTC(new Date(th).getUTCFullYear(), 0, 1);
+    return Math.floor((th - jan1) / DAY / 7) + 1;
+  }
+  function esBisiesto(y) { return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0; }
+
+  var api = { sumarARestar: sumarARestar, diaSemana: diaSemana, diasLaborables: diasLaborables, diaDelAnyo: diaDelAnyo, semanaISO: semanaISO, esBisiesto: esBisiesto, imc: imc, calorias: calorias, difYMD: difYMD, diasEntreFechas: diasEntreFechas, proximoCumple: proximoCumple, prestamo: prestamo, dto: dto, addMonthsClamp: addMonthsClamp, hipoteca: hipoteca, ivaDesdeBase: ivaDesdeBase, ivaDesdeTotal: ivaDesdeTotal, pct: pct, interesCompuesto: interesCompuesto, despido: despido };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Calc = api;
 })(typeof window !== 'undefined' ? window : this);

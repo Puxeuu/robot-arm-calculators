@@ -96,5 +96,27 @@ ok('descompte entre 80 i 56', C.dto.entrePrecios(80, 56), 30);
 ok('acumulat 20 % + 10 %', C.dto.acumulado(20, 10), 28);
 ok('2x1 equival a 50 %', C.dto.entrePrecios(2, 1), 50);
 
+// ---- Lot 3: dates ----
+ok('dia setmana 16-11-2026 = dilluns', C.diaSemana(U2(2026, 11, 16)), 1, 0);
+ok('dia setmana 1-1-2000 = dissabte', C.diaSemana(U2(2000, 1, 1)), 6, 0);
+ok('31-1-2024 + 1 mes = 29-2-2024', C.sumarARestar(U2(2024, 1, 31), 0, 1, 0, 1), U2(2024, 2, 29), 0);
+ok('29-2-2024 + 1 any = 28-2-2025', C.sumarARestar(U2(2024, 2, 29), 1, 0, 0, 1), U2(2025, 2, 28), 0);
+ok('16-11-2026 + 10 dies', C.sumarARestar(U2(2026, 11, 16), 0, 0, 10, 1), U2(2026, 11, 26), 0);
+ok('16-11-2026 - 16 dies', C.sumarARestar(U2(2026, 11, 16), 0, 0, 16, -1), U2(2026, 10, 31), 0);
+ok('laborables dll-div', C.diasLaborables(U2(2026, 11, 16), U2(2026, 11, 20)), 5, 0);
+ok('laborables dll-diumenge', C.diasLaborables(U2(2026, 11, 16), U2(2026, 11, 22)), 5, 0);
+ok('laborables 16 a 30 nov', C.diasLaborables(U2(2026, 11, 16), U2(2026, 11, 30)), 11, 0);
+ok('laborables un dilluns', C.diasLaborables(U2(2026, 11, 16), U2(2026, 11, 16)), 1, 0);
+ok('laborables un dissabte', C.diasLaborables(U2(2026, 11, 21), U2(2026, 11, 21)), 0, 0);
+ok('laborables invertit', C.diasLaborables(U2(2026, 11, 20), U2(2026, 11, 16)), 0, 0);
+// laborables per forca bruta en tot 2026
+let brute = 0; for (let d = U2(2026, 1, 1); d <= U2(2026, 12, 31); d += 86400000) { const w = new Date(d).getUTCDay(); if (w !== 0 && w !== 6) brute++; }
+ok('laborables any 2026 (forca bruta)', C.diasLaborables(U2(2026, 1, 1), U2(2026, 12, 31)), brute, 0);
+ok('dia de l\'any 16-11-2026', C.diaDelAnyo(U2(2026, 11, 16)), 320, 0);
+ok('setmana ISO 16-11-2026', C.semanaISO(U2(2026, 11, 16)), 47, 0);
+ok('setmana ISO 30-12-2024 = 1', C.semanaISO(U2(2024, 12, 30)), 1, 0);
+ok('setmana ISO 1-1-2021 = 53', C.semanaISO(U2(2021, 1, 1)), 53, 0);
+ok('bisiest 2000', C.esBisiesto(2000) ? 1 : 0, 1, 0); ok('bisiest 1900 no', C.esBisiesto(1900) ? 1 : 0, 0, 0); ok('bisiest 2024', C.esBisiesto(2024) ? 1 : 0, 1, 0);
+
 console.log(fails === 0 ? '\nTOT CORRECTE' : '\nFALLADES: ' + fails);
 process.exit(fails ? 1 : 0);
