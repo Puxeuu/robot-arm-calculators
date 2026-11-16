@@ -1,0 +1,20 @@
+name: Revision semanal de la web
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'   # cada dilluns a les 08:00 UTC
+  workflow_dispatch:       # tambe es pot executar a ma
+
+permissions:
+  contents: read
+
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Comprovador de salut (proves, enllacos, dades estructurades i URLs en linia)
+        run: node herramientas/check.js
