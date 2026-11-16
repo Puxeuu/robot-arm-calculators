@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://puxeuu.github.io/robot-arm-calculators/sitemap.xml

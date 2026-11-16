@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot Arm Torque Calculator (air &amp; underwater)</title>
+<meta name="description" content="Free static torque calculator for multi-joint robot arms. Includes payload, safety factor and buoyancy for underwater arms. Results in N·m, kgf·cm and oz·in.">
+<style>
+:root{--bg:#fff;--fg:#1b1f24;--mut:#5b6672;--card:#f4f6f8;--line:#d8dee4;--acc:#0b6bcb;--bad:#c2410c}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1317;--fg:#e6eaee;--mut:#97a3af;--card:#171d23;--line:#2a323a;--acc:#58a6ff;--bad:#fb923c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:1.6rem;margin:.2em 0}h2{font-size:1.15rem;margin:1.4em 0 .5em}
+.sub{color:var(--mut);margin:0 0 12px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label{display:flex;flex-direction:column;font-size:.8rem;color:var(--mut);gap:3px}
+input,select,button{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;min-width:0}
+button{cursor:pointer}button.p{background:var(--acc);color:#fff;border-color:var(--acc)}
+.row button{padding:6px 4px;font-size:.8rem}
+.row{display:grid;grid-template-columns:1.1fr repeat(5,1fr) 64px;gap:6px;align-items:end;margin-bottom:8px}
+@media(max-width:700px){.row{grid-template-columns:repeat(2,1fr)}}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}
+th{color:var(--mut);font-weight:600}
+.big{font-size:1.3rem;font-weight:700}
+.warn{color:var(--bad)}
+svg{width:100%;height:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:700px){.twocol{grid-template-columns:1fr}}
+.small{font-size:.85rem;color:var(--mut)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+<div class="top">
+  <div><h1 data-i="title"></h1><p class="sub" data-i="sub"></p></div>
+  <select id="lang" aria-label="Language"><option value="en">English</option><option value="ca">Català</option><option value="es">Español</option></select>
+</div>
+
+<div class="card">
+  <div class="grid">
+    <label><span data-i="medium"></span>
+      <select id="medium"><option value="1.2" data-i="air"></option><option value="1000" data-i="fresh"></option><option value="1025" data-i="sea"></option></select></label>
+    <label><span data-i="sf"></span><input id="sf" type="number" step="0.1" min="1" value="1.5"></label>
+    <label><span data-i="payload"></span><input id="pm" type="number" min="0" value="200"></label>
+    <label><span data-i="paydens"></span><input id="pr" type="number" min="0" value="2700"></label>
+  </div>
+</div>
+
+<h2 data-i="links"></h2>
+<div id="links"></div>
+<div class="btns">
+  <button id="add" data-i="add"></button>
+  <button id="ex1" data-i="ex1"></button>
+  <button id="ex2" data-i="ex2"></button>
+</div>
+
+<h2 data-i="results"></h2>
+<div class="card">
+  <div id="summary"></div>
+  <table id="tbl"></table>
+</div>
+<div class="twocol">
+  <div><svg id="arm" viewBox="0 0 400 300" role="img"></svg></div>
+  <div><svg id="chart" viewBox="0 0 400 300" role="img"></svg></div>
+</div>
+
+<h2 data-i="howto"></h2>
+<div class="card small" id="doc"></div>
+</main>
+
+<script src="calc.js"></script>
+<script>
+var T = {
+ en:{title:"Robot Arm Torque Calculator",sub:"Static joint torque for multi-link arms, with payload and underwater buoyancy.",
+  medium:"Medium",air:"Air",fresh:"Fresh water",sea:"Sea water",sf:"Safety factor",payload:"Payload mass at tip (g)",paydens:"Payload density (kg/m³, 0 = ignore buoyancy)",
+  links:"Links",name:"Link",length:"Length (mm)",mass:"Mass (g)",dens:"Density (kg/m³)",angle:"Angle (°)",com:"CoM (% length)",add:"+ Add link",del:"Remove",
+  ex1:"Example: underwater 3-link arm",ex2:"Example: light desk arm",
+  results:"Results",joint:"Joint",hold:"Holding torque (N·m)",withsf:"With safety factor (N·m)",kgf:"kgf·cm",oz:"oz·in",worst:"Worst case (all straight, N·m)",
+  maxtxt:"Largest joint torque with safety factor",at:"at joint",reach:"Reach",
+  dir:"CCW",dirc:"CW",floats:"Net buoyant: the link floats up",howto:"How it works",
+  doc:"<p><b>Model:</b> planar arm in the XY plane, X horizontal, Y up, Z toward the viewer (right-hand rule). Angles are absolute from the horizontal (+X), positive counter-clockwise. Each link has its centre of mass at the given % of its length.</p><p><b>Formula:</b> holding torque at joint i = Σ (net weight of every link and payload beyond the joint × horizontal distance to the joint). Net weight = (m − ρ<sub>medium</sub>·m/ρ<sub>body</sub>)·g, with g = 9.80665 m/s². The safety factor multiplies the result.</p><p><b>Not included:</b> dynamic loads (acceleration, drag, water added mass), friction, gearbox efficiency and cable forces. Use a generous safety factor (1.5–2.5), and more underwater. Density is the equivalent solid density of each link (hollow or with motors inside: use mass / displaced volume).</p><p><b>Units:</b> inputs in mm, g, degrees; internal SI (m, kg, rad, N·m). 1 N·m = 10.197 kgf·cm = 141.6 oz·in.</p><p>Need joint angles for a target point? Try the <a href='../ik-calculator/'>inverse kinematics calculator</a>.</p>"},
+ ca:{title:"Calculador de parell per a braços robòtics",sub:"Parell estàtic de cada articulació, amb càrrega i flotabilitat submarina.",
+  medium:"Medi",air:"Aire",fresh:"Aigua dolça",sea:"Aigua de mar",sf:"Factor de seguretat",payload:"Massa de la càrrega a la punta (g)",paydens:"Densitat de la càrrega (kg/m³, 0 = sense flotabilitat)",
+  links:"Trams",name:"Tram",length:"Longitud (mm)",mass:"Massa (g)",dens:"Densitat (kg/m³)",angle:"Angle (°)",com:"CM (% longitud)",add:"+ Afegeix tram",del:"Treu",
+  ex1:"Exemple: braç submarí de 3 trams",ex2:"Exemple: braç lleuger de sobretaula",
+  results:"Resultats",joint:"Articulació",hold:"Parell de subjecció (N·m)",withsf:"Amb factor de seguretat (N·m)",kgf:"kgf·cm",oz:"oz·in",worst:"Cas pitjor (tot estirat, N·m)",
+  maxtxt:"Parell màxim amb factor de seguretat",at:"a l'articulació",reach:"Abast",
+  dir:"antihorari",dirc:"horari",floats:"Flotabilitat neta: el tram flota cap amunt",howto:"Com funciona",
+  doc:"<p><b>Model:</b> braç pla al pla XY, X horitzontal, Y amunt, Z cap a l'observador (regla de la mà dreta). Els angles són absoluts respecte a l'horitzontal (+X), positius en sentit antihorari. Cada tram té el centre de massa al % indicat de la seva longitud.</p><p><b>Fórmula:</b> parell de subjecció a l'articulació i = Σ (pes net de cada tram i càrrega més enllà × distància horitzontal a l'articulació). Pes net = (m − ρ<sub>medi</sub>·m/ρ<sub>cos</sub>)·g, amb g = 9,80665 m/s². El factor de seguretat multiplica el resultat.</p><p><b>No inclou:</b> càrregues dinàmiques (acceleració, arrossegament, massa afegida de l'aigua), fricció, rendiment del reductor ni forces de cables. Usa un factor de seguretat generós (1,5–2,5), i més sota l'aigua. La densitat és la d'un sòlid equivalent (si el tram és buit o porta motors a dins: massa / volum desplaçat).</p><p><b>Unitats:</b> entrades en mm, g i graus; internament SI (m, kg, rad, N·m). 1 N·m = 10,197 kgf·cm = 141,6 oz·in.</p>"},
+ es:{title:"Calculadora de par para brazos robóticos",sub:"Par estático de cada articulación, con carga y flotabilidad submarina.",
+  medium:"Medio",air:"Aire",fresh:"Agua dulce",sea:"Agua de mar",sf:"Factor de seguridad",payload:"Masa de la carga en la punta (g)",paydens:"Densidad de la carga (kg/m³, 0 = sin flotabilidad)",
+  links:"Eslabones",name:"Eslabón",length:"Longitud (mm)",mass:"Masa (g)",dens:"Densidad (kg/m³)",angle:"Ángulo (°)",com:"CM (% longitud)",add:"+ Añadir eslabón",del:"Quitar",
+  ex1:"Ejemplo: brazo submarino de 3 eslabones",ex2:"Ejemplo: brazo ligero de sobremesa",
+  results:"Resultados",joint:"Articulación",hold:"Par de sujeción (N·m)",withsf:"Con factor de seguridad (N·m)",kgf:"kgf·cm",oz:"oz·in",worst:"Peor caso (todo estirado, N·m)",
+  maxtxt:"Par máximo con factor de seguridad",at:"en la articulación",reach:"Alcance",
+  dir:"antihorario",dirc:"horario",floats:"Flotabilidad neta: el eslabón flota hacia arriba",howto:"Cómo funciona",
+  doc:"<p><b>Modelo:</b> brazo plano en el plano XY, X horizontal, Y arriba, Z hacia el observador (regla de la mano derecha). Los ángulos son absolutos respecto a la horizontal (+X), positivos en sentido antihorario. Cada eslabón tiene su centro de masa en el % indicado de su longitud.</p><p><b>Fórmula:</b> par de sujeción en la articulación i = Σ (peso neto de cada eslabón y carga más allá × distancia horizontal a la articulación). Peso neto = (m − ρ<sub>medio</sub>·m/ρ<sub>cuerpo</sub>)·g, con g = 9,80665 m/s². El factor de seguridad multiplica el resultado.</p><p><b>No incluye:</b> cargas dinámicas (aceleración, arrastre, masa añadida del agua), fricción, rendimiento del reductor ni fuerzas de cables. Usa un factor de seguridad generoso (1,5–2,5), y mayor bajo el agua. La densidad es la de un sólido equivalente (si el eslabón es hueco o lleva motores dentro: masa / volumen desplazado).</p><p><b>Unidades:</b> entradas en mm, g y grados; internamente SI (m, kg, rad, N·m). 1 N·m = 10,197 kgf·cm = 141,6 oz·in.</p>"}
+};
+var lang = (localStorage.getItem('lang') || (navigator.language||'en').slice(0,2));
+if (!T[lang]) lang = 'en';
+var links = [];
+var EX = {
+ ex1: {medium:'1025', sf:1.5, pm:300, pr:2700, links:[[ 'Shoulder',300,900,2000,30,50],['Elbow',250,700,2000,-20,50],['Wrist',100,300,2000,-60,50]]},
+ ex2: {medium:'1.2', sf:2, pm:100, pr:0, links:[['Base',150,120,1200,45,50],['Arm',150,80,1200,10,50]]}
+};
+
+function $(id){return document.getElementById(id)}
+function t(k){return T[lang][k]}
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i]').forEach(function(e){e.textContent = t(e.getAttribute('data-i'))});
+  $('doc').innerHTML = t('doc');
+  $('lang').value = lang;
+  document.title = t('title');
+  renderLinks(); calc();
+}
+function addLink(v){
+  links.push(v || ['Link '+(links.length+1),200,300,2000,0,50]);
+}
+function renderLinks(){
+  var h='';
+  links.forEach(function(l,i){
+    h += '<div class="row card" data-idx="'+i+'">'+
+     '<label>'+t('name')+'<input data-f="0" value="'+l[0]+'"></label>'+
+     '<label>'+t('length')+'<input data-f="1" type="number" min="1" value="'+l[1]+'"></label>'+
+     '<label>'+t('mass')+'<input data-f="2" type="number" min="0" value="'+l[2]+'"></label>'+
+     '<label>'+t('dens')+'<input data-f="3" type="number" min="0" value="'+l[3]+'"></label>'+
+     '<label>'+t('angle')+'<input data-f="4" type="number" value="'+l[4]+'"></label>'+
+     '<label>'+t('com')+'<input data-f="5" type="number" min="0" max="100" value="'+l[5]+'"></label>'+
+     '<button data-del="'+i+'">'+t('del')+'</button></div>';
+  });
+  $('links').innerHTML = h;
+}
+function num(x,d){var v=parseFloat(x);return isFinite(v)?v:d}
+function f(x,n){return x.toFixed(n)}
+
+function calc(){
+  var arm = {
+    rhoMed: num($('medium').value,1.2), g: TorqueCalc.G, sf: Math.max(1,num($('sf').value,1)),
+    payload:{m:Math.max(0,num($('pm').value,0))/1000, rho:num($('pr').value,0)},
+    links: links.map(function(l){return {L:Math.max(0.001,num(l[1],1)/1000), m:Math.max(0,num(l[2],0))/1000, rho:num(l[3],0), theta:num(l[4],0)*Math.PI/180, cmFrac:Math.min(1,Math.max(0,num(l[5],50)/100))}})
+  };
+  if (!arm.links.length){ $('tbl').innerHTML=''; $('summary').innerHTML=''; $('arm').innerHTML=''; $('chart').innerHTML=''; return; }
+  var r = TorqueCalc.computeArm(arm), w = TorqueCalc.worstCase(arm);
+  var maxI=0; r.joints.forEach(function(j,i){ if (j.withSF > r.joints[maxI].withSF) maxI=i; });
+  var mx = r.joints[maxI].withSF;
+  var reach = Math.sqrt(r.tip.x*r.tip.x + r.tip.y*r.tip.y);
+  $('summary').innerHTML = '<div class="small">'+t('maxtxt')+' ('+t('at')+' '+(maxI+1)+')</div><div class="big">'+f(mx,3)+' N·m &nbsp; <span class="small">= '+f(mx*10.1972,1)+' kgf·cm = '+f(mx*141.612,1)+' oz·in</span></div><div class="small">'+t('reach')+': '+f(reach*1000,0)+' mm</div>';
+  var h='<tr><th>'+t('joint')+'</th><th>'+t('hold')+'</th><th>'+t('withsf')+'</th><th>'+t('kgf')+'</th><th>'+t('oz')+'</th><th>'+t('worst')+'</th></tr>';
+  r.joints.forEach(function(j,i){
+    var dir = j.torque>=0 ? t('dir') : t('dirc');
+    h += '<tr><td>'+(i+1)+' · '+escapeHtml(links[i][0])+'</td><td>'+f(j.abs,3)+' <span class="small">('+dir+')</span></td><td><b>'+f(j.withSF,3)+'</b></td><td>'+f(j.withSF*10.1972,1)+'</td><td>'+f(j.withSF*141.612,1)+'</td><td>'+f(w.joints[i].withSF,3)+'</td></tr>';
+  });
+  $('tbl').innerHTML = h;
+  var fl = r.netWeights.some(function(x){return x<0}) || r.netPayload<0;
+  if (fl) $('summary').innerHTML += '<div class="small warn">'+t('floats')+'</div>';
+  drawArm(r); drawChart(r.joints.map(function(j){return j.withSF}), w.joints.map(function(j){return j.withSF}));
+}
+function escapeHtml(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+function drawArm(r){
+  var xs=r.pts.map(function(p){return p.x}), ys=r.pts.map(function(p){return p.y});
+  var minx=Math.min.apply(0,xs.concat([0])), maxx=Math.max.apply(0,xs.concat([0.01]));
+  var miny=Math.min.apply(0,ys.concat([0])), maxy=Math.max.apply(0,ys.concat([0.01]));
+  var span=Math.max(maxx-minx,maxy-miny,0.05), s=240/span;
+  var ox=80-minx*s, oy=150+((maxy+miny)/2)*s;
+  function X(x){return ox+x*s} function Y(y){return oy-y*s}
+  var g='<line x1="0" y1="'+Y(0)+'" x2="400" y2="'+Y(0)+'" stroke="currentColor" stroke-opacity=".2" stroke-dasharray="4"/>';
+  for (var i=0;i<r.pts.length-1;i++){
+    g+='<line x1="'+X(r.pts[i].x)+'" y1="'+Y(r.pts[i].y)+'" x2="'+X(r.pts[i+1].x)+'" y2="'+Y(r.pts[i+1].y)+'" stroke="var(--acc)" stroke-width="6" stroke-linecap="round"/>';
+    g+='<circle cx="'+X(r.cms[i].x)+'" cy="'+Y(r.cms[i].y)+'" r="3" fill="var(--bad)"/>';
+  }
+  r.pts.forEach(function(p,i){ g+='<circle cx="'+X(p.x)+'" cy="'+Y(p.y)+'" r="6" fill="var(--bg)" stroke="var(--fg)" stroke-width="2"/>'; });
+  $('arm').innerHTML = g;
+}
+function drawChart(a,b){
+  var n=a.length, m=Math.max.apply(0,a.concat(b).concat([1e-9])), g='';
+  var bw=Math.min(40,300/n/2.4);
+  for (var i=0;i<n;i++){
+    var x=50+i*(330/n), ha=a[i]/m*200, hb=b[i]/m*200;
+    g+='<rect x="'+x+'" y="'+(250-hb)+'" width="'+bw+'" height="'+hb+'" fill="var(--fg)" fill-opacity=".18"/>';
+    g+='<rect x="'+(x+bw+3)+'" y="'+(250-ha)+'" width="'+bw+'" height="'+ha+'" fill="var(--acc)"/>';
+    g+='<text x="'+(x+bw)+'" y="270" font-size="12" text-anchor="middle" fill="currentColor">J'+(i+1)+'</text>';
+    g+='<text x="'+(x+bw+3+bw/2)+'" y="'+(244-ha)+'" font-size="11" text-anchor="middle" fill="currentColor">'+f(a[i],2)+'</text>';
+  }
+  g+='<line x1="45" y1="250" x2="395" y2="250" stroke="currentColor" stroke-opacity=".4"/>';
+  g+='<text x="45" y="14" font-size="11" fill="currentColor">N·m</text>';
+  g+='<rect x="120" y="6" width="10" height="10" fill="var(--acc)"/><text x="134" y="15" font-size="10" fill="currentColor">'+t('withsf')+'</text>';
+  g+='<rect x="120" y="20" width="10" height="10" fill="currentColor" fill-opacity=".25"/><text x="134" y="29" font-size="10" fill="currentColor">'+t('worst')+'</text>';
+  $('chart').innerHTML=g;
+}
+
+document.addEventListener('input',function(e){
+  var row=e.target.closest('.row');
+  if(row && e.target.dataset.f!==undefined){ links[+row.dataset.idx][+e.target.dataset.f]=e.target.value; }
+  calc();
+});
+document.addEventListener('click',function(e){
+  if(e.target.dataset.del!==undefined){ links.splice(+e.target.dataset.del,1); renderLinks(); calc(); }
+});
+$('add').onclick=function(){addLink();renderLinks();calc()};
+function loadEx(k){var x=EX[k];$('medium').value=x.medium;$('sf').value=x.sf;$('pm').value=x.pm;$('pr').value=x.pr;links=x.links.map(function(l){return l.slice()});renderLinks();calc()}
+$('ex1').onclick=function(){loadEx('ex1')}; $('ex2').onclick=function(){loadEx('ex2')};
+$('lang').onchange=function(){lang=this.value;try{localStorage.setItem('lang',lang)}catch(e){};applyLang()};
+$('medium').onchange=calc;
+links = EX.ex1.links.map(function(l){return l.slice()}); $('medium').value=EX.ex1.medium; $('sf').value=EX.ex1.sf; $('pm').value=EX.ex1.pm; $('pr').value=EX.ex1.pr;
+applyLang();
+</script>
+</body>
+</html>

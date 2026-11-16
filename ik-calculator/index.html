@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2-Link Robot Arm Inverse Kinematics Calculator</title>
+<meta name="description" content="Free inverse and forward kinematics calculator for a planar 2-link robot arm. Both elbow solutions, workspace, joint limits and error check. Angles in degrees and radians.">
+<style>
+:root{--bg:#fff;--fg:#1b1f24;--mut:#5b6672;--card:#f4f6f8;--line:#d8dee4;--acc:#0b6bcb;--bad:#c2410c}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1317;--fg:#e6eaee;--mut:#97a3af;--card:#171d23;--line:#2a323a;--acc:#58a6ff;--bad:#fb923c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:1.6rem;margin:.2em 0}h2{font-size:1.15rem;margin:1.4em 0 .5em}
+.sub{color:var(--mut);margin:0 0 12px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+label{display:flex;flex-direction:column;font-size:.8rem;color:var(--mut);gap:3px}
+input,select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;min-width:0}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}
+th{color:var(--mut);font-weight:600}
+.big{font-size:1.3rem;font-weight:700}
+.warn{color:var(--bad)}.small{font-size:.85rem;color:var(--mut)}
+svg{width:100%;height:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:700px){.twocol{grid-template-columns:1fr}}
+a{color:var(--acc)}
+</style>
+</head>
+<body>
+<main>
+<div class="top">
+  <div><h1 data-i="title"></h1><p class="sub" data-i="sub"></p></div>
+  <select id="lang" aria-label="Language"><option value="en">English</option><option value="ca">Català</option><option value="es">Español</option></select>
+</div>
+
+<div class="card"><div class="grid">
+  <label><span data-i="l1"></span><input id="L1" type="number" min="1" value="300"></label>
+  <label><span data-i="l2"></span><input id="L2" type="number" min="1" value="250"></label>
+  <label><span data-i="tx"></span><input id="tx" type="number" value="350"></label>
+  <label><span data-i="ty"></span><input id="ty" type="number" value="200"></label>
+  <label><span data-i="elbow"></span><select id="elbow"><option value="1" data-i="down"></option><option value="-1" data-i="up"></option></select></label>
+</div>
+<div class="grid" style="margin-top:10px">
+  <label><span data-i="lim1"></span><input id="a1" value="-90, 180"></label>
+  <label><span data-i="lim2"></span><input id="a2" value="-150, 150"></label>
+</div></div>
+
+<h2 data-i="results"></h2>
+<div class="card"><div id="out"></div></div>
+<div class="twocol">
+  <div><svg id="draw" viewBox="0 0 400 400" role="img"></svg></div>
+  <div class="card" id="fkbox"></div>
+</div>
+
+<h2 data-i="howto"></h2>
+<div class="card small" id="doc"></div>
+</main>
+<script src="ik.js"></script>
+<script>
+var T = {
+ en:{title:"2-Link Arm Inverse Kinematics Calculator",sub:"Planar arm: joint angles for a target point, with both elbow solutions and a forward-kinematics check.",
+  l1:"Link 1 length (mm)",l2:"Link 2 length (mm)",tx:"Target X (mm)",ty:"Target Y (mm)",elbow:"Elbow",down:"Elbow down (θ2 > 0)",up:"Elbow up (θ2 < 0)",
+  lim1:"Joint 1 limits (°, min, max)",lim2:"Joint 2 limits (°, min, max)",results:"Results",
+  th1:"Joint 1 θ1",th2:"Joint 2 θ2 (relative)",phi:"Tip orientation φ = θ1+θ2",deg:"degrees",rad:"radians",
+  unreach:"Target out of reach. Reachable distance from the base: ",to:"to",
+  inlim:"within limits",outlim:"OUT OF LIMITS",sel:"Selected solution",other:"Other elbow",
+  fkt:"Forward kinematics check",fkp:"Position error",fko:"Orientation error",howto:"How it works",
+  doc:"<p><b>Conventions:</b> planar XY, X horizontal, Y up, Z toward the viewer (right-hand rule). θ1 is measured from +X, counter-clockwise positive. θ2 is relative to link 1. Tip orientation φ = θ1 + θ2.</p><p><b>Inverse kinematics:</b> cos θ2 = (x² + y² − L1² − L2²) / (2·L1·L2); θ1 = atan2(y, x) − atan2(L2·sin θ2, L1 + L2·cos θ2). The two signs of θ2 are the two elbow configurations. Reachable points lie between |L1 − L2| and L1 + L2 from the base.</p><p><b>Check:</b> the angles found are put back into the forward kinematics and compared with the target. The error should be ~1e-13 mm.</p><p>Units: inputs in mm and degrees; internally SI (m, rad). For torque on each joint use the <a href='../torque-calculator/'>torque calculator</a>.</p>"},
+ ca:{title:"Calculador de cinemàtica inversa d'un braç de 2 trams",sub:"Braç pla: angles de les articulacions per arribar a un punt, amb les dues solucions de colze i comprovació amb cinemàtica directa.",
+  l1:"Longitud tram 1 (mm)",l2:"Longitud tram 2 (mm)",tx:"Objectiu X (mm)",ty:"Objectiu Y (mm)",elbow:"Colze",down:"Colze cap avall (θ2 > 0)",up:"Colze cap amunt (θ2 < 0)",
+  lim1:"Límits articulació 1 (°, mín, màx)",lim2:"Límits articulació 2 (°, mín, màx)",results:"Resultats",
+  th1:"Articulació 1 θ1",th2:"Articulació 2 θ2 (relatiu)",phi:"Orientació de la punta φ = θ1+θ2",deg:"graus",rad:"radians",
+  unreach:"Objectiu fora d'abast. Distància assolible des de la base: ",to:"a",
+  inlim:"dins de límits",outlim:"FORA DE LÍMITS",sel:"Solució triada",other:"Altre colze",
+  fkt:"Comprovació amb cinemàtica directa",fkp:"Error de posició",fko:"Error d'orientació",howto:"Com funciona",
+  doc:"<p><b>Conveni:</b> pla XY, X horitzontal, Y amunt, Z cap a l'observador (regla de la mà dreta). θ1 es mesura des de +X, positiu antihorari. θ2 és relatiu al tram 1. Orientació de la punta φ = θ1 + θ2.</p><p><b>Cinemàtica inversa:</b> cos θ2 = (x² + y² − L1² − L2²) / (2·L1·L2); θ1 = atan2(y, x) − atan2(L2·sin θ2, L1 + L2·cos θ2). Els dos signes de θ2 són les dues configuracions de colze. Els punts assolibles són entre |L1 − L2| i L1 + L2 de la base.</p><p><b>Comprovació:</b> els angles trobats es posen a la cinemàtica directa i es comparen amb l'objectiu. L'error ha de ser ~1e-13 mm.</p><p>Unitats: entrades en mm i graus; internament SI (m, rad). Per al parell de cada articulació, usa el <a href='../torque-calculator/'>calculador de parell</a>.</p>"},
+ es:{title:"Calculadora de cinemática inversa de un brazo de 2 eslabones",sub:"Brazo plano: ángulos de las articulaciones para llegar a un punto, con las dos soluciones de codo y comprobación con cinemática directa.",
+  l1:"Longitud eslabón 1 (mm)",l2:"Longitud eslabón 2 (mm)",tx:"Objetivo X (mm)",ty:"Objetivo Y (mm)",elbow:"Codo",down:"Codo abajo (θ2 > 0)",up:"Codo arriba (θ2 < 0)",
+  lim1:"Límites articulación 1 (°, mín, máx)",lim2:"Límites articulación 2 (°, mín, máx)",results:"Resultados",
+  th1:"Articulación 1 θ1",th2:"Articulación 2 θ2 (relativo)",phi:"Orientación de la punta φ = θ1+θ2",deg:"grados",rad:"radianes",
+  unreach:"Objetivo fuera de alcance. Distancia alcanzable desde la base: ",to:"a",
+  inlim:"dentro de límites",outlim:"FUERA DE LÍMITES",sel:"Solución elegida",other:"Otro codo",
+  fkt:"Comprobación con cinemática directa",fkp:"Error de posición",fko:"Error de orientación",howto:"Cómo funciona",
+  doc:"<p><b>Convenio:</b> plano XY, X horizontal, Y arriba, Z hacia el observador (regla de la mano derecha). θ1 se mide desde +X, positivo antihorario. θ2 es relativo al eslabón 1. Orientación de la punta φ = θ1 + θ2.</p><p><b>Cinemática inversa:</b> cos θ2 = (x² + y² − L1² − L2²) / (2·L1·L2); θ1 = atan2(y, x) − atan2(L2·sin θ2, L1 + L2·cos θ2). Los dos signos de θ2 son las dos configuraciones de codo. Los puntos alcanzables están entre |L1 − L2| y L1 + L2 de la base.</p><p><b>Comprobación:</b> los ángulos hallados se meten en la cinemática directa y se comparan con el objetivo. El error debe ser ~1e-13 mm.</p><p>Unidades: entradas en mm y grados; internamente SI (m, rad). Para el par de cada articulación usa la <a href='../torque-calculator/'>calculadora de par</a>.</p>"}
+};
+var lang=(function(){var l;try{l=localStorage.getItem('lang')}catch(e){}return l||(navigator.language||'en').slice(0,2)})();
+if(!T[lang]) lang='en';
+function $(i){return document.getElementById(i)} function t(k){return T[lang][k]}
+function num(x,d){var v=parseFloat(x);return isFinite(v)?v:d}
+function lim(s,d){var p=String(s).split(/[,;\s]+/).map(parseFloat).filter(isFinite);return p.length>=2?[Math.min(p[0],p[1]),Math.max(p[0],p[1])]:d}
+function deg(r){return r*180/Math.PI}
+function inL(a,l){return a>=l[0]-1e-9&&a<=l[1]+1e-9}
+
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-i]').forEach(function(e){e.textContent=t(e.getAttribute('data-i'))});
+  $('doc').innerHTML=t('doc'); $('lang').value=lang; document.title=t('title'); calc();
+}
+function row(label,s,l1,l2,L1,L2){
+  var a1=deg(IK.wrap(s.th1)),a2=deg(IK.wrap(s.th2)),ph=deg(IK.wrap(s.th1+s.th2));
+  var ok1=inL(a1,l1),ok2=inL(a2,l2);
+  function c(ok){return ok?'<span class="small">'+t('inlim')+'</span>':'<span class="warn">'+t('outlim')+'</span>'}
+  return '<tr><td>'+label+'</td><td>'+a1.toFixed(3)+'° ('+IK.wrap(s.th1).toFixed(4)+' rad)<br>'+c(ok1)+'</td><td>'+a2.toFixed(3)+'° ('+IK.wrap(s.th2).toFixed(4)+' rad)<br>'+c(ok2)+'</td><td>'+ph.toFixed(3)+'°</td></tr>';
+}
+function calc(){
+  var L1=Math.max(1,num($('L1').value,1))/1000,L2=Math.max(1,num($('L2').value,1))/1000;
+  var x=num($('tx').value,0)/1000,y=num($('ty').value,0)/1000,e=+$('elbow').value;
+  var l1=lim($('a1').value,[-180,180]),l2=lim($('a2').value,[-180,180]);
+  var ws=IK.workspace(L1,L2), d=Math.hypot(x,y);
+  var s=IK.ik(L1,L2,x,y,e), o=IK.ik(L1,L2,x,y,-e);
+  var out='',fk='';
+  if(!s){
+    out='<div class="warn big">'+t('unreach')+(ws.rMin*1000).toFixed(1)+' '+t('to')+' '+(ws.rMax*1000).toFixed(1)+' mm</div>';
+    $('fkbox').innerHTML='';
+  } else {
+    out='<table><tr><th></th><th>'+t('th1')+'</th><th>'+t('th2')+'</th><th>'+t('phi')+'</th></tr>'+
+      row('<b>'+t('sel')+'</b>',s,l1,l2)+row(t('other'),o,l1,l2)+'</table>';
+    var p=IK.fk(L1,L2,s.th1,s.th2);
+    $('fkbox').innerHTML='<b>'+t('fkt')+'</b><p class="small">x = '+(p.x*1000).toFixed(6)+' mm<br>y = '+(p.y*1000).toFixed(6)+' mm<br>'+t('fkp')+': '+(Math.hypot(p.x-x,p.y-y)*1000).toExponential(2)+' mm<br>'+t('fko')+': '+Math.abs(IK.wrap(p.phi-(s.th1+s.th2))).toExponential(2)+' rad</p>';
+  }
+  $('out').innerHTML=out;
+  draw(L1,L2,x,y,s,o,ws);
+}
+function draw(L1,L2,x,y,s,o,ws){
+  var R=ws.rMax, sc=170/Math.max(R,1e-6), cx=200, cy=200;
+  function X(v){return cx+v*sc} function Y(v){return cy-v*sc}
+  var g='<circle cx="'+cx+'" cy="'+cy+'" r="'+(ws.rMax*sc)+'" fill="var(--acc)" fill-opacity=".07" stroke="var(--acc)" stroke-opacity=".4"/>';
+  if(ws.rMin>0) g+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(ws.rMin*sc)+'" fill="var(--bg)" stroke="var(--acc)" stroke-opacity=".4"/>';
+  g+='<line x1="0" y1="'+cy+'" x2="400" y2="'+cy+'" stroke="currentColor" stroke-opacity=".15"/><line x1="'+cx+'" y1="0" x2="'+cx+'" y2="400" stroke="currentColor" stroke-opacity=".15"/>';
+  function arm(sol,op,w){
+    var p1=IK.fk(L1,0,sol.th1,0), p2=IK.fk(L1,L2,sol.th1,sol.th2);
+    return '<polyline points="'+X(0)+','+Y(0)+' '+X(p1.x)+','+Y(p1.y)+' '+X(p2.x)+','+Y(p2.y)+'" fill="none" stroke="var(--acc)" stroke-opacity="'+op+'" stroke-width="'+w+'" stroke-linecap="round" stroke-linejoin="round"/>'+
+      '<circle cx="'+X(p1.x)+'" cy="'+Y(p1.y)+'" r="5" fill="var(--bg)" stroke="var(--fg)" stroke-opacity="'+op+'" stroke-width="2"/>';
+  }
+  if(o) g+=arm(o,.25,4);
+  if(s) g+=arm(s,1,6);
+  g+='<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="var(--fg)"/>';
+  g+='<circle cx="'+X(x)+'" cy="'+Y(y)+'" r="6" fill="none" stroke="var(--bad)" stroke-width="2"/><line x1="'+(X(x)-9)+'" y1="'+Y(y)+'" x2="'+(X(x)+9)+'" y2="'+Y(y)+'" stroke="var(--bad)"/><line x1="'+X(x)+'" y1="'+(Y(y)-9)+'" x2="'+X(x)+'" y2="'+(Y(y)+9)+'" stroke="var(--bad)"/>';
+  $('draw').innerHTML=g;
+}
+document.addEventListener('input',calc);
+$('elbow').onchange=calc;
+$('lang').onchange=function(){lang=this.value;try{localStorage.setItem('lang',lang)}catch(e){};applyLang()};
+applyLang();
+</script>
+</body>
+</html>
