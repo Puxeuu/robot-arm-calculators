@@ -61,5 +61,40 @@ ok('objectiu topall 12 mensualitats', C.despido(U(1990, 1, 1), U(2020, 1, 1), 36
 // Dates invertides no donen negatiu
 ok('dates invertides = 0', C.despido(U(2020, 1, 1), U(2019, 1, 1), 36500, 'improcedente').indemnizacion, 0);
 
+// ---- Lot 2 ----
+const U2 = (y, m, d) => Date.UTC(y, m - 1, d);
+ok('IMC 70 kg 175 cm', C.imc(70, 175).imc, 70 / (1.75 * 1.75), 1e-9);
+ok('IMC categoria normal', C.imc(70, 175).cat === 'normal' ? 1 : 0, 1);
+ok('IMC 18.4 = bajo', C.imc(18.4 * 4, 200).cat === 'bajo' ? 1 : 0, 1);
+ok('IMC 25 = sobre', C.imc(25 * 4, 200).cat === 'sobre' ? 1 : 0, 1);
+ok('IMC 30 = ob1', C.imc(30 * 4, 200).cat === 'ob1' ? 1 : 0, 1);
+ok('IMC 40 = ob3', C.imc(40 * 4, 200).cat === 'ob3' ? 1 : 0, 1);
+ok('pes max normal 175 cm', C.imc(70, 175).pesoMax, 24.9 * 1.75 * 1.75, 1e-9);
+ok('Mifflin home 80/180/30', C.calorias('h', 80, 180, 30, 1).bmr, 1780);
+ok('Mifflin dona 60/165/25', C.calorias('m', 60, 165, 25, 1).bmr, 1345.25);
+ok('mantenimiento = bmr*1.55', C.calorias('h', 80, 180, 30, 1.55).mantenimiento, 1780 * 1.55);
+ok('deficit 15 %', C.calorias('h', 80, 180, 30, 1.2).deficit, 1780 * 1.2 * 0.85);
+ok('dies 2024 any de traspas (1-1 a 31-12)', C.diasEntreFechas(U2(2024, 1, 1), U2(2024, 12, 31)), 365, 0);
+ok('dies 2023 (1-1 a 31-12)', C.diasEntreFechas(U2(2023, 1, 1), U2(2023, 12, 31)), 364, 0);
+let y = C.difYMD(U2(2000, 5, 20), U2(2026, 11, 16));
+ok('edat anys', y.y, 26, 0); ok('edat mesos', y.m, 5, 0); ok('edat dies', y.d, 27, 0);
+y = C.difYMD(U2(2000, 1, 31), U2(2000, 3, 1));
+ok('31-gen a 1-mar: 0a 1m 1d (m)', y.m, 1, 0); ok('31-gen a 1-mar (d)', y.d, 1, 0);
+y = C.difYMD(U2(2000, 2, 29), U2(2001, 2, 28));
+// Criteri: qui neix un 29-feb compleix anys el 28-feb als anys no de traspas
+ok('29-feb a 28-feb seguent: 1 any (criteri 28-feb)', y.y, 1, 0);
+ok('proper aniversari 20-mai des de 16-nov-2026', C.proximoCumple(U2(2000, 5, 20), U2(2026, 11, 16)), Math.round((U2(2027, 5, 20) - U2(2026, 11, 16)) / 86400000), 0);
+ok('aniversari avui = 0 dies', C.proximoCumple(U2(2000, 11, 16), U2(2026, 11, 16)), 0, 0);
+let pr = C.prestamo(10000, 6, 60, 0);
+ok('TAE sense comissio = (1+TIN/12)^12-1', pr.tae, (Math.pow(1 + 0.06 / 12, 12) - 1) * 100, 1e-6);
+ok('quota prestec 10000 6% 60 mesos', pr.cuota, 193.33, 0.01);
+pr = C.prestamo(10000, 6, 60, 2);
+ok('TAE amb comissio > TAE sense', pr.tae > 6.1678 ? 1 : 0, 1);
+ok('cost total = interessos + comissio', pr.costeTotal, pr.intereses + 200, 1e-9);
+ok('descompte 30 % de 80', C.dto.precioFinal(80, 30), 56);
+ok('descompte entre 80 i 56', C.dto.entrePrecios(80, 56), 30);
+ok('acumulat 20 % + 10 %', C.dto.acumulado(20, 10), 28);
+ok('2x1 equival a 50 %', C.dto.entrePrecios(2, 1), 50);
+
 console.log(fails === 0 ? '\nTOT CORRECTE' : '\nFALLADES: ' + fails);
 process.exit(fails ? 1 : 0);

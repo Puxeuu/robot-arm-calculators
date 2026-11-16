@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de edad exacta en años, meses y días</title>
+<link rel="canonical" href="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-edad/">
+<meta name="description" content="Calcula tu edad exacta a partir de la fecha de nacimiento: años, meses y días cumplidos, días vividos y cuánto falta para tu próximo cumpleaños.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Calculadora de edad exacta en años, meses y días">
+<meta property="og:description" content="Calcula tu edad exacta a partir de la fecha de nacimiento: años, meses y días cumplidos, días vividos y cuánto falta para tu próximo cumpleaños.">
+<meta property="og:url" content="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-edad/">
+<link rel="stylesheet" href="../estilo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo se calcula la edad exacta?","acceptedAnswer":{"@type":"Answer","text":"Se cuentan los años y meses completos desde la fecha de nacimiento y los días que sobran hasta la fecha de cálculo."}},{"@type":"Question","name":"¿Y si nací un 29 de febrero?","acceptedAnswer":{"@type":"Answer","text":"En los años que no son bisiestos, esta calculadora considera que cumples años el 28 de febrero."}},{"@type":"Question","name":"¿Para qué sirve la fecha de cálculo?","acceptedAnswer":{"@type":"Answer","text":"Para saber la edad que tenías (o tendrás) en otra fecha, por ejemplo para un trámite o una inscripción."}}]}</script>
+</head>
+<body>
+<main>
+<nav><a href="../" data-i="home">Todas las calculadoras</a></nav>
+<div class="top">
+  <div><h1 data-i="h1">Calculadora de edad</h1><p class="sub" data-i="sub">Tu edad exacta en años, meses y días, y los días que faltan para tu cumpleaños.</p></div>
+  <select id="lang" aria-label="Idioma / Idioma"><option value="es">Español</option><option value="ca">Català</option></select>
+</div>
+<div class="card"><div class="grid"><label><span data-i="nac">Fecha de nacimiento</span><input id="nac" type="date" value="1990-06-15"></label><label><span data-i="ref">Calcular a fecha de</span><input id="ref" type="date"></label></div></div><div class="card" id="out"></div>
+<h2 data-i="artT">Preguntas frecuentes</h2>
+<div class="card small" data-h="art"><h3>¿Cómo se calcula la edad exacta?</h3><p>Se cuentan los años y meses completos desde la fecha de nacimiento y los días que sobran hasta la fecha de cálculo.</p><h3>¿Y si nací un 29 de febrero?</h3><p>En los años que no son bisiestos, esta calculadora considera que cumples años el 28 de febrero.</p><h3>¿Para qué sirve la fecha de cálculo?</h3><p>Para saber la edad que tenías (o tendrás) en otra fecha, por ejemplo para un trámite o una inscripción.</p></div>
+<h2 data-i="howto">Cómo se calcula</h2>
+<div class="card small" data-h="doc"><p>La edad se calcula contando los años y meses completos desde la fecha de nacimiento y los días que sobran. Quien nació un 29 de febrero cumple años el 28 de febrero en los años que no son bisiestos (es un criterio de esta calculadora).</p></div>
+<footer data-i="disclaimer">Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.</footer>
+</main>
+<script src="../comun.js"></script>
+<script src="../calculos.js"></script>
+<script>
+var T = {"es":{"home":"Todas las calculadoras","disclaimer":"Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.","howto":"Cómo se calcula","results":"Resultado","year":"Año","h1":"Calculadora de edad","sub":"Tu edad exacta en años, meses y días, y los días que faltan para tu cumpleaños.","nac":"Fecha de nacimiento","ref":"Calcular a fecha de","edad":"Edad","y":"años","mo":"meses","d":"días","vividos":"Días vividos","cumple":"Días hasta el próximo cumpleaños","hoy":"¡Hoy es tu cumpleaños!","err":"La fecha de nacimiento debe ser anterior a la fecha de cálculo.","doc":"<p>La edad se calcula contando los años y meses completos desde la fecha de nacimiento y los días que sobran. Quien nació un 29 de febrero cumple años el 28 de febrero en los años que no son bisiestos (es un criterio de esta calculadora).</p>","art":"<h3>¿Cómo se calcula la edad exacta?</h3><p>Se cuentan los años y meses completos desde la fecha de nacimiento y los días que sobran hasta la fecha de cálculo.</p><h3>¿Y si nací un 29 de febrero?</h3><p>En los años que no son bisiestos, esta calculadora considera que cumples años el 28 de febrero.</p><h3>¿Para qué sirve la fecha de cálculo?</h3><p>Para saber la edad que tenías (o tendrás) en otra fecha, por ejemplo para un trámite o una inscripción.</p>","artT":"Preguntas frecuentes"},"ca":{"home":"Totes les calculadores","disclaimer":"Eina informativa. Els resultats són orientatius i no substitueixen l'assessorament d'un professional. Les normes poden canviar.","howto":"Com es calcula","results":"Resultat","year":"Any","h1":"Calculadora d'edat","sub":"La teva edat exacta en anys, mesos i dies, i els dies que falten per al teu aniversari.","nac":"Data de naixement","ref":"Calcular a data de","edad":"Edat","y":"anys","mo":"mesos","d":"dies","vividos":"Dies viscuts","cumple":"Dies fins al proper aniversari","hoy":"Avui és el teu aniversari!","err":"La data de naixement ha de ser anterior a la data de càlcul.","doc":"<p>L'edat es calcula comptant els anys i mesos complets des de la data de naixement i els dies que sobren. Qui va néixer un 29 de febrer fa anys el 28 de febrer els anys que no són de traspàs (és un criteri d'aquesta calculadora).</p>","art":"<h3>Com es calcula l'edat exacta?</h3><p>Es compten els anys i mesos complets des de la data de naixement i els dies que sobren fins a la data de càlcul.</p><h3>I si vaig néixer un 29 de febrer?</h3><p>Els anys que no són de traspàs, aquesta calculadora considera que fas anys el 28 de febrer.</p><h3>Per a què serveix la data de càlcul?</h3><p>Per saber l'edat que tenies (o tindràs) en una altra data, per exemple per a un tràmit o una inscripció.</p>","artT":"Preguntes freqüents"}};
+var $ = Comun.$, num = Comun.num, eur = Comun.eur, fn = Comun.n, t = Comun.t;
+function kv(k, v) { return '<div class="kv"><span>' + k + '</span><b>' + v + '</b></div>'; }
+if (!$('ref').value) $('ref').value = new Date().toISOString().slice(0, 10);
+function utc(s) { var p = s.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]); }
+function calc() {
+  var a = $('nac').value, b = $('ref').value;
+  if (!a || !b) { $('out').innerHTML = ''; return; }
+  a = utc(a); b = utc(b);
+  if (b < a) { $('out').innerHTML = '<div class="warn">' + t('err') + '</div>'; return; }
+  var x = Calc.difYMD(a, b), c = Calc.proximoCumple(a, b);
+  $('out').innerHTML = '<div class="small">' + t('edad') + '</div><div class="big">' + x.y + ' ' + t('y') + ', ' + x.m + ' ' + t('mo') + ', ' + x.d + ' ' + t('d') + '</div>' + kv(t('vividos'), fn(Calc.diasEntreFechas(a, b), 0)) + kv(t('cumple'), c === 0 ? t('hoy') : fn(c, 0));
+}
+Comun.init(T, calc);
+</script>
+<script data-goatcounter="https://robotarm.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

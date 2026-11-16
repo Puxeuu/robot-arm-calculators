@@ -77,7 +77,71 @@
     return out;
   }
 
-  var api = { hipoteca: hipoteca, ivaDesdeBase: ivaDesdeBase, ivaDesdeTotal: ivaDesdeTotal, pct: pct, interesCompuesto: interesCompuesto, despido: despido };
+
+  // ---------- IMC (OMS, adults) ----------
+  function imc(kg, cm) {
+    var m = cm / 100, v = kg / (m * m);
+    var cat = v < 18.5 ? 'bajo' : v < 25 ? 'normal' : v < 30 ? 'sobre' : v < 35 ? 'ob1' : v < 40 ? 'ob2' : 'ob3';
+    return { imc: v, cat: cat, pesoMin: 18.5 * m * m, pesoMax: 24.9 * m * m };
+  }
+
+  // ---------- Calories: equacio de Mifflin-St Jeor ----------
+  // sexo: 'h' (home) o 'm' (dona); kg, cm, edat en anys; factor = factor d'activitat
+  function calorias(sexo, kg, cm, edad, factor) {
+    var bmr = 10 * kg + 6.25 * cm - 5 * edad + (sexo === 'h' ? 5 : -161);
+    var mant = bmr * factor;
+    return { bmr: bmr, mantenimiento: mant, deficit: mant * 0.85, superavit: mant * 1.10 };
+  }
+
+  // ---------- Dates ----------
+  var DAY = 86400000;
+  function addMonthsClamp(ms, n) {
+    var d = new Date(ms), y = d.getUTCFullYear(), mo = d.getUTCMonth() + n, day = d.getUTCDate();
+    var ny = y + Math.floor(mo / 12), nm = ((mo % 12) + 12) % 12;
+    var last = new Date(Date.UTC(ny, nm + 1, 0)).getUTCDate();
+    return Date.UTC(ny, nm, Math.min(day, last));
+  }
+  // Diferencia en anys, mesos i dies entre a <= b (ms UTC).
+  function difYMD(a, b) {
+    var A = new Date(a), B = new Date(b);
+    var total = (B.getUTCFullYear() - A.getUTCFullYear()) * 12 + (B.getUTCMonth() - A.getUTCMonth());
+    var cand = addMonthsClamp(a, total);
+    if (cand > b) { total--; cand = addMonthsClamp(a, total); }
+    return { y: Math.floor(total / 12), m: total % 12, d: Math.round((b - cand) / DAY), mesesTotales: total };
+  }
+  function diasEntreFechas(a, b) { return Math.round((b - a) / DAY); }
+  // Dies fins al proper aniversari (ref dins l'any o seguent).
+  function proximoCumple(nac, ref) {
+    var N = new Date(nac), R = new Date(ref), y = R.getUTCFullYear();
+    function cumple(yy) { var last = new Date(Date.UTC(yy, N.getUTCMonth() + 1, 0)).getUTCDate(); return Date.UTC(yy, N.getUTCMonth(), Math.min(N.getUTCDate(), last)); }
+    var c = cumple(y);
+    if (c < ref) c = cumple(y + 1);
+    return Math.round((c - ref) / DAY);
+  }
+
+  // ---------- Prestec personal amb comissio d'obertura i TAE aproximada ----------
+  // TAE: tipus anual equivalent amb els fluxos: rep (P - comissio) i paga la quota mensual.
+  // No inclou assegurances ni altres despeses.
+  function prestamo(P, tin, meses, comPct) {
+    var h = hipoteca(P, tin, meses / 12), com = P * comPct / 100, neto = P - com, n = Math.round(meses);
+    var lo = 1e-9, hi = 1;
+    function f(i) { return h.cuota * (1 - Math.pow(1 + i, -n)) / i - neto; }
+    var tae = 0;
+    if (f(lo) > 0) {
+      for (var k = 0; k < 200; k++) { var mid = (lo + hi) / 2; if (f(mid) > 0) lo = mid; else hi = mid; }
+      tae = Math.pow(1 + (lo + hi) / 2, 12) - 1;
+    }
+    return { cuota: h.cuota, intereses: h.intereses, comision: com, costeTotal: h.intereses + com, totalPagado: h.total + com, tae: tae * 100 };
+  }
+
+  // ---------- Descomptes ----------
+  var dto = {
+    precioFinal: function (p, d) { return p * (1 - d / 100); },
+    entrePrecios: function (orig, fin) { return (1 - fin / orig) * 100; },
+    acumulado: function (d1, d2) { return (1 - (1 - d1 / 100) * (1 - d2 / 100)) * 100; }
+  };
+
+  var api = { imc: imc, calorias: calorias, difYMD: difYMD, diasEntreFechas: diasEntreFechas, proximoCumple: proximoCumple, prestamo: prestamo, dto: dto, addMonthsClamp: addMonthsClamp, hipoteca: hipoteca, ivaDesdeBase: ivaDesdeBase, ivaDesdeTotal: ivaDesdeTotal, pct: pct, interesCompuesto: interesCompuesto, despido: despido };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Calc = api;
 })(typeof window !== 'undefined' ? window : this);

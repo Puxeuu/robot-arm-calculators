@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de descuentos y rebajas: precio final y porcentaje</title>
+<link rel="canonical" href="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-descuentos/">
+<meta name="description" content="Calcula el precio final con descuento, qué porcentaje de descuento tiene un artículo y el descuento equivalente de dos rebajas acumuladas.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Calculadora de descuentos y rebajas: precio final y porcentaje">
+<meta property="og:description" content="Calcula el precio final con descuento, qué porcentaje de descuento tiene un artículo y el descuento equivalente de dos rebajas acumuladas.">
+<meta property="og:url" content="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-descuentos/">
+<link rel="stylesheet" href="../estilo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo se calcula el precio con descuento?","acceptedAnswer":{"@type":"Answer","text":"Multiplica el precio por 1 − descuento/100. Con un 30 % de descuento, un artículo de 80 € cuesta 56 €."}},{"@type":"Question","name":"¿Cómo saber qué descuento tiene un artículo?","acceptedAnswer":{"@type":"Answer","text":"Divide el precio rebajado entre el original, réstalo a 1 y multiplica por 100. Si 80 € pasan a 56 €, el descuento es del 30 %."}},{"@type":"Question","name":"¿Dos descuentos del 20 % y del 10 % suman un 30 %?","acceptedAnswer":{"@type":"Answer","text":"No, equivalen a un 28 %. El segundo descuento se aplica sobre el precio ya rebajado."}},{"@type":"Question","name":"¿Cuánto descuento es un 2×1 o un 3×2?","acceptedAnswer":{"@type":"Answer","text":"Un 2×1 equivale a un 50 % de descuento y un 3×2 a un 33,3 %. Si la segunda unidad va al 50 %, el descuento total es del 25 %."}}]}</script>
+</head>
+<body>
+<main>
+<nav><a href="../" data-i="home">Todas las calculadoras</a></nav>
+<div class="top">
+  <div><h1 data-i="h1">Calculadora de descuentos</h1><p class="sub" data-i="sub">Precio con descuento, porcentaje de rebaja y descuentos acumulados.</p></div>
+  <select id="lang" aria-label="Idioma / Idioma"><option value="es">Español</option><option value="ca">Català</option></select>
+</div>
+<div class="grid">
+<div class="card"><b><span data-i="q1">Precio final con descuento</span></b><div class="grid" style="margin-top:8px"><label><span data-i="q1a">Precio original (€)</span><input id="a1" type="number" step="any" value="80" ></label><label><span data-i="q1b">Descuento (%)</span><input id="b1" type="number" step="any" value="30" ></label></div><div class="big" id="r1"></div><div class="small" id="s1"></div></div>
+<div class="card"><b><span data-i="q2">¿Qué descuento tiene?</span></b><div class="grid" style="margin-top:8px"><label><span data-i="q2a">Precio original (€)</span><input id="a2" type="number" step="any" value="80" ></label><label><span data-i="q2b">Precio rebajado (€)</span><input id="b2" type="number" step="any" value="56" ></label></div><div class="big" id="r2"></div></div>
+<div class="card"><b><span data-i="q3">Dos descuentos acumulados</span></b><div class="grid" style="margin-top:8px"><label><span data-i="q3a">Primer descuento (%)</span><input id="a3" type="number" step="any" value="20" ></label><label><span data-i="q3b">Segundo descuento (%)</span><input id="b3" type="number" step="any" value="10" ></label></div><div class="big" id="r3"></div><div class="small" id="s3"></div></div></div>
+<h2 data-i="artT">Preguntas frecuentes</h2>
+<div class="card small" data-h="art"><h3>¿Cómo se calcula el precio con descuento?</h3><p>Multiplica el precio por 1 − descuento/100. Con un 30 % de descuento, un artículo de 80 € cuesta 56 €.</p><h3>¿Cómo saber qué descuento tiene un artículo?</h3><p>Divide el precio rebajado entre el original, réstalo a 1 y multiplica por 100. Si 80 € pasan a 56 €, el descuento es del 30 %.</p><h3>¿Dos descuentos del 20 % y del 10 % suman un 30 %?</h3><p>No, equivalen a un 28 %. El segundo descuento se aplica sobre el precio ya rebajado.</p><h3>¿Cuánto descuento es un 2×1 o un 3×2?</h3><p>Un 2×1 equivale a un 50 % de descuento y un 3×2 a un 33,3 %. Si la segunda unidad va al 50 %, el descuento total es del 25 %.</p></div>
+<h2 data-i="howto">Cómo se calcula</h2>
+<div class="card small" data-h="doc"><p>Precio final = precio × (1 − descuento/100). Descuento = (1 − precio rebajado / precio original) × 100. Dos descuentos acumulados no se suman: se aplican uno tras otro, así que el equivalente es 1 − (1 − d1/100)·(1 − d2/100). Un 20 % y un 10 % equivalen a un 28 %, no a un 30 %.</p><p>Otros ejemplos: un 2×1 equivale a un 50 % de descuento; un 3×2, a un 33,3 %; y «la segunda unidad al 50 %» equivale a un 25 % sobre el total de las dos.</p></div>
+<footer data-i="disclaimer">Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.</footer>
+</main>
+<script src="../comun.js"></script>
+<script src="../calculos.js"></script>
+<script>
+var T = {"es":{"home":"Todas las calculadoras","disclaimer":"Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.","howto":"Cómo se calcula","results":"Resultado","year":"Año","h1":"Calculadora de descuentos","sub":"Precio con descuento, porcentaje de rebaja y descuentos acumulados.","q1":"Precio final con descuento","q1a":"Precio original (€)","q1b":"Descuento (%)","q2":"¿Qué descuento tiene?","q2a":"Precio original (€)","q2b":"Precio rebajado (€)","q3":"Dos descuentos acumulados","q3a":"Primer descuento (%)","q3b":"Segundo descuento (%)","eq":"equivale a un único descuento de","ahorro":"Ahorras","doc":"<p>Precio final = precio × (1 − descuento/100). Descuento = (1 − precio rebajado / precio original) × 100. Dos descuentos acumulados no se suman: se aplican uno tras otro, así que el equivalente es 1 − (1 − d1/100)·(1 − d2/100). Un 20 % y un 10 % equivalen a un 28 %, no a un 30 %.</p><p>Otros ejemplos: un 2×1 equivale a un 50 % de descuento; un 3×2, a un 33,3 %; y «la segunda unidad al 50 %» equivale a un 25 % sobre el total de las dos.</p>","art":"<h3>¿Cómo se calcula el precio con descuento?</h3><p>Multiplica el precio por 1 − descuento/100. Con un 30 % de descuento, un artículo de 80 € cuesta 56 €.</p><h3>¿Cómo saber qué descuento tiene un artículo?</h3><p>Divide el precio rebajado entre el original, réstalo a 1 y multiplica por 100. Si 80 € pasan a 56 €, el descuento es del 30 %.</p><h3>¿Dos descuentos del 20 % y del 10 % suman un 30 %?</h3><p>No, equivalen a un 28 %. El segundo descuento se aplica sobre el precio ya rebajado.</p><h3>¿Cuánto descuento es un 2×1 o un 3×2?</h3><p>Un 2×1 equivale a un 50 % de descuento y un 3×2 a un 33,3 %. Si la segunda unidad va al 50 %, el descuento total es del 25 %.</p>","artT":"Preguntas frecuentes"},"ca":{"home":"Totes les calculadores","disclaimer":"Eina informativa. Els resultats són orientatius i no substitueixen l'assessorament d'un professional. Les normes poden canviar.","howto":"Com es calcula","results":"Resultat","year":"Any","h1":"Calculadora de descomptes","sub":"Preu amb descompte, percentatge de rebaixa i descomptes acumulats.","q1":"Preu final amb descompte","q1a":"Preu original (€)","q1b":"Descompte (%)","q2":"Quin descompte té?","q2a":"Preu original (€)","q2b":"Preu rebaixat (€)","q3":"Dos descomptes acumulats","q3a":"Primer descompte (%)","q3b":"Segon descompte (%)","eq":"equival a un únic descompte de","ahorro":"Estalvies","doc":"<p>Preu final = preu × (1 − descompte/100). Descompte = (1 − preu rebaixat / preu original) × 100. Dos descomptes acumulats no se sumen: s'apliquen un darrere l'altre, així que l'equivalent és 1 − (1 − d1/100)·(1 − d2/100). Un 20 % i un 10 % equivalen a un 28 %, no a un 30 %.</p><p>Altres exemples: un 2×1 equival a un 50 % de descompte; un 3×2, a un 33,3 %; i «la segona unitat al 50 %» equival a un 25 % sobre el total de les dues.</p>","art":"<h3>Com es calcula el preu amb descompte?</h3><p>Multiplica el preu per 1 − descompte/100. Amb un 30 % de descompte, un article de 80 € costa 56 €.</p><h3>Com saber quin descompte té un article?</h3><p>Divideix el preu rebaixat entre l'original, resta-ho a 1 i multiplica per 100. Si 80 € passen a 56 €, el descompte és del 30 %.</p><h3>Dos descomptes del 20 % i del 10 % sumen un 30 %?</h3><p>No, equivalen a un 28 %. El segon descompte s'aplica sobre el preu ja rebaixat.</p><h3>Quant descompte és un 2×1 o un 3×2?</h3><p>Un 2×1 equival a un 50 % de descompte i un 3×2 a un 33,3 %. Si la segona unitat va al 50 %, el descompte total és del 25 %.</p>","artT":"Preguntes freqüents"}};
+var $ = Comun.$, num = Comun.num, eur = Comun.eur, fn = Comun.n, t = Comun.t;
+function kv(k, v) { return '<div class="kv"><span>' + k + '</span><b>' + v + '</b></div>'; }
+function calc() {
+  var p = num('a1', 0), d = num('b1', 0), f = Calc.dto.precioFinal(p, d);
+  $('r1').textContent = eur(f); $('s1').textContent = t('ahorro') + ': ' + eur(p - f);
+  var o = num('a2', 0), r = num('b2', 0);
+  $('r2').textContent = o > 0 ? fn(Calc.dto.entrePrecios(o, r), 2) + ' %' : '—';
+  var ac = Calc.dto.acumulado(num('a3', 0), num('b3', 0));
+  $('r3').textContent = fn(ac, 2) + ' %'; $('s3').textContent = t('eq') + ' ' + fn(ac, 2) + ' %';
+}
+Comun.init(T, calc);
+</script>
+<script data-goatcounter="https://robotarm.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
