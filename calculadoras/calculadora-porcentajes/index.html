@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de porcentajes: calcular, variación, aumentar y disminuir</title>
+<link rel="canonical" href="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-porcentajes/">
+<meta name="description" content="Calcula porcentajes al instante: el X % de una cantidad, qué porcentaje es, variación porcentual, aumentar o disminuir un porcentaje y el total.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Calculadora de porcentajes: calcular, variación, aumentar y disminuir">
+<meta property="og:description" content="Calcula porcentajes al instante: el X % de una cantidad, qué porcentaje es, variación porcentual, aumentar o disminuir un porcentaje y el total.">
+<meta property="og:url" content="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-porcentajes/">
+<link rel="stylesheet" href="../estilo.css">
+</head>
+<body>
+<main>
+<nav><a href="../" data-i="home">Todas las calculadoras</a></nav>
+<div class="top">
+  <div><h1 data-i="h1">Calculadora de porcentajes</h1><p class="sub" data-i="sub">Seis cálculos habituales de porcentajes, con el resultado al instante.</p></div>
+  <select id="lang" aria-label="Idioma / Idioma"><option value="es">Español</option><option value="ca">Català</option></select>
+</div>
+<div class="grid"><div class="card" data-k="deY"><b><span data-i="pc1">¿Cuánto es el X % de Y?</span></b><div class="grid" style="margin-top:8px"><label><span data-i="pc1a">X (%)</span><input id="a0" type="number" step="any" value="20" ></label><label><span data-i="pc1b">Y</span><input id="b0" type="number" step="any" value="150" ></label></div><div class="big" id="r0"></div></div><div class="card" data-k="que"><b><span data-i="pc2">¿Qué porcentaje es X de Y?</span></b><div class="grid" style="margin-top:8px"><label><span data-i="pc2a">X</span><input id="a1" type="number" step="any" value="30" ></label><label><span data-i="pc2b">Y</span><input id="b1" type="number" step="any" value="150" ></label></div><div class="big" id="r1"></div></div><div class="card" data-k="var"><b><span data-i="pc3">Variación porcentual de A a B</span></b><div class="grid" style="margin-top:8px"><label><span data-i="pc3a">A (valor inicial)</span><input id="a2" type="number" step="any" value="80" ></label><label><span data-i="pc3b">B (valor final)</span><input id="b2" type="number" step="any" value="100" ></label></div><div class="big" id="r2"></div></div><div class="card" data-k="aum"><b><span data-i="pc4">Aumentar un valor un X %</span></b><div class="grid" style="margin-top:8px"><label><span data-i="pc4a">Valor</span><input id="a3" type="number" step="any" value="100" ></label><label><span data-i="pc4b">X (%)</span><input id="b3" type="number" step="any" value="21" ></label></div><div class="big" id="r3"></div></div><div class="card" data-k="dis"><b><span data-i="pc5">Disminuir un valor un X %</span></b><div class="grid" style="margin-top:8px"><label><span data-i="pc5a">Valor</span><input id="a4" type="number" step="any" value="100" ></label><label><span data-i="pc5b">X (%)</span><input id="b4" type="number" step="any" value="10" ></label></div><div class="big" id="r4"></div></div><div class="card" data-k="tot"><b><span data-i="pc6">X es el P % de ¿qué número?</span></b><div class="grid" style="margin-top:8px"><label><span data-i="pc6a">X</span><input id="a5" type="number" step="any" value="30" ></label><label><span data-i="pc6b">P (%)</span><input id="b5" type="number" step="any" value="20" ></label></div><div class="big" id="r5"></div></div></div>
+<h2 data-i="howto">Cómo se calcula</h2>
+<div class="card small" data-h="doc"><p>X % de Y = Y·X/100. X es el (X/Y·100) % de Y. Variación = (B − A)/A·100. Aumentar = Y·(1 + X/100). Disminuir = Y·(1 − X/100). Si X es el P % de un número, ese número es X/(P/100).</p></div>
+<footer data-i="disclaimer">Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.</footer>
+</main>
+<script src="../comun.js"></script>
+<script src="../calculos.js"></script>
+<script>
+var T = {"es":{"home":"Todas las calculadoras","disclaimer":"Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.","howto":"Cómo se calcula","results":"Resultado","year":"Año","h1":"Calculadora de porcentajes","sub":"Seis cálculos habituales de porcentajes, con el resultado al instante.","pc1":"¿Cuánto es el X % de Y?","pc1a":"X (%)","pc1b":"Y","pc2":"¿Qué porcentaje es X de Y?","pc2a":"X","pc2b":"Y","pc3":"Variación porcentual de A a B","pc3a":"A (valor inicial)","pc3b":"B (valor final)","pc4":"Aumentar un valor un X %","pc4a":"Valor","pc4b":"X (%)","pc5":"Disminuir un valor un X %","pc5a":"Valor","pc5b":"X (%)","pc6":"X es el P % de ¿qué número?","pc6a":"X","pc6b":"P (%)","doc":"<p>X % de Y = Y·X/100. X es el (X/Y·100) % de Y. Variación = (B − A)/A·100. Aumentar = Y·(1 + X/100). Disminuir = Y·(1 − X/100). Si X es el P % de un número, ese número es X/(P/100).</p>"},"ca":{"home":"Totes les calculadores","disclaimer":"Eina informativa. Els resultats són orientatius i no substitueixen l'assessorament d'un professional. Les normes poden canviar.","howto":"Com es calcula","results":"Resultat","year":"Any","h1":"Calculadora de percentatges","sub":"Sis càlculs habituals de percentatges, amb el resultat a l'instant.","pc1":"Quant és el X % de Y?","pc1a":"X (%)","pc1b":"Y","pc2":"Quin percentatge és X de Y?","pc2a":"X","pc2b":"Y","pc3":"Variació percentual d'A a B","pc3a":"A (valor inicial)","pc3b":"B (valor final)","pc4":"Augmentar un valor un X %","pc4a":"Valor","pc4b":"X (%)","pc5":"Disminuir un valor un X %","pc5a":"Valor","pc5b":"X (%)","pc6":"X és el P % de quin nombre?","pc6a":"X","pc6b":"P (%)","doc":"<p>X % de Y = Y·X/100. X és el (X/Y·100) % de Y. Variació = (B − A)/A·100. Augmentar = Y·(1 + X/100). Disminuir = Y·(1 − X/100). Si X és el P % d'un nombre, aquest nombre és X/(P/100).</p>"}};
+var $ = Comun.$, num = Comun.num, eur = Comun.eur, fn = Comun.n, t = Comun.t;
+function kv(k, v) { return '<div class="kv"><span>' + k + '</span><b>' + v + '</b></div>'; }
+var KEYS = ['deY', 'que', 'var', 'aum', 'dis', 'tot'];
+function calc() {
+  var f = [
+    function (a, b) { return Calc.pct.deY(a, b); },
+    function (a, b) { return b === 0 ? NaN : Calc.pct.queporcentaje(a, b); },
+    function (a, b) { return a === 0 ? NaN : Calc.pct.variacion(a, b); },
+    function (a, b) { return Calc.pct.aumentar(a, b); },
+    function (a, b) { return Calc.pct.disminuir(a, b); },
+    function (a, b) { return b === 0 ? NaN : Calc.pct.total(a, b); }
+  ];
+  var isPct = [false, true, true, false, false, false];
+  for (var i = 0; i < 6; i++) {
+    var v = f[i](num('a' + i, 0), num('b' + i, 0));
+    $('r' + i).textContent = isFinite(v) ? fn(v, 2) + (isPct[i] ? ' %' : '') : '—';
+  }
+}
+Comun.init(T, calc);
+</script>
+<script data-goatcounter="https://robotarm.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

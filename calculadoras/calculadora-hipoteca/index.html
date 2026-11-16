@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de hipoteca y préstamo: cuota mensual e intereses</title>
+<link rel="canonical" href="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-hipoteca/">
+<meta name="description" content="Calcula la cuota mensual de tu hipoteca o préstamo, los intereses totales y el cuadro de amortización año a año. Gratis y sin registro.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Calculadora de hipoteca y préstamo: cuota mensual e intereses">
+<meta property="og:description" content="Calcula la cuota mensual de tu hipoteca o préstamo, los intereses totales y el cuadro de amortización año a año. Gratis y sin registro.">
+<meta property="og:url" content="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-hipoteca/">
+<link rel="stylesheet" href="../estilo.css">
+</head>
+<body>
+<main>
+<nav><a href="../" data-i="home">Todas las calculadoras</a></nav>
+<div class="top">
+  <div><h1 data-i="h1">Calculadora de hipoteca y préstamo</h1><p class="sub" data-i="sub">Cuota mensual, intereses totales y cuadro de amortización por años.</p></div>
+  <select id="lang" aria-label="Idioma / Idioma"><option value="es">Español</option><option value="ca">Català</option></select>
+</div>
+<div class="card"><div class="grid"><label><span data-i="cap">Capital (€)</span><input id="cap" type="number" step="any" value="150000" min="0"></label><label><span data-i="tin">Interés anual TIN (%)</span><input id="tin" type="number" step="any" value="3" min="0"></label><label><span data-i="anys">Plazo (años)</span><input id="anys" type="number" step="any" value="25" min="1"></label></div></div>
+<div class="card" id="out"></div>
+<h2 data-i="howto">Cómo se calcula</h2>
+<div class="card small" data-h="doc"><p>Se usa el sistema de amortización francés (cuota constante): cuota = C·r / (1 − (1 + r)<sup>−n</sup>), con C el capital, r = TIN/12 el interés mensual y n el número de meses. En cada cuota, los intereses son r por el capital pendiente y el resto amortiza capital.</p><p>No incluye comisiones, seguros vinculados, gastos de formalización ni la revisión del tipo en hipotecas variables (con Euríbor, la cuota cambia en cada revisión). El TIN es el tipo nominal; no es la TAE.</p></div>
+<footer data-i="disclaimer">Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.</footer>
+</main>
+<script src="../comun.js"></script>
+<script src="../calculos.js"></script>
+<script>
+var T = {"es":{"home":"Todas las calculadoras","disclaimer":"Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.","howto":"Cómo se calcula","results":"Resultado","year":"Año","h1":"Calculadora de hipoteca y préstamo","sub":"Cuota mensual, intereses totales y cuadro de amortización por años.","cap":"Capital (€)","tin":"Interés anual TIN (%)","anys":"Plazo (años)","cuota":"Cuota mensual","ints":"Intereses totales","tot":"Total a pagar","inter":"Intereses","amort":"Amortizado","pend":"Pendiente","doc":"<p>Se usa el sistema de amortización francés (cuota constante): cuota = C·r / (1 − (1 + r)<sup>−n</sup>), con C el capital, r = TIN/12 el interés mensual y n el número de meses. En cada cuota, los intereses son r por el capital pendiente y el resto amortiza capital.</p><p>No incluye comisiones, seguros vinculados, gastos de formalización ni la revisión del tipo en hipotecas variables (con Euríbor, la cuota cambia en cada revisión). El TIN es el tipo nominal; no es la TAE.</p>"},"ca":{"home":"Totes les calculadores","disclaimer":"Eina informativa. Els resultats són orientatius i no substitueixen l'assessorament d'un professional. Les normes poden canviar.","howto":"Com es calcula","results":"Resultat","year":"Any","h1":"Calculadora d'hipoteca i préstec","sub":"Quota mensual, interessos totals i quadre d'amortització per anys.","cap":"Capital (€)","tin":"Interès anual TIN (%)","anys":"Termini (anys)","cuota":"Quota mensual","ints":"Interessos totals","tot":"Total a pagar","inter":"Interessos","amort":"Amortitzat","pend":"Pendent","doc":"<p>S'usa el sistema d'amortització francès (quota constant): quota = C·r / (1 − (1 + r)<sup>−n</sup>), amb C el capital, r = TIN/12 l'interès mensual i n el nombre de mesos. En cada quota, els interessos són r pel capital pendent i la resta amortitza capital.</p><p>No inclou comissions, assegurances vinculades, despeses de formalització ni la revisió del tipus en hipoteques variables (amb Euríbor, la quota canvia a cada revisió). El TIN és el tipus nominal; no és la TAE.</p>"}};
+var $ = Comun.$, num = Comun.num, eur = Comun.eur, fn = Comun.n, t = Comun.t;
+function kv(k, v) { return '<div class="kv"><span>' + k + '</span><b>' + v + '</b></div>'; }
+function calc() {
+  var P = Math.max(0, num('cap', 0)), tin = Math.max(0, num('tin', 0)), y = Math.max(1, num('anys', 1));
+  var r = Calc.hipoteca(P, tin, y);
+  var h = '<div class="small">' + t('cuota') + '</div><div class="big">' + eur(r.cuota) + '</div>' + kv(t('ints'), eur(r.intereses)) + kv(t('tot'), eur(r.total));
+  h += '<table style="margin-top:10px"><tr><th>' + t('year') + '</th><th>' + t('inter') + '</th><th>' + t('amort') + '</th><th>' + t('pend') + '</th></tr>';
+  r.years.forEach(function (a) { h += '<tr><td>' + a.year + '</td><td>' + eur(a.interes) + '</td><td>' + eur(a.capital) + '</td><td>' + eur(a.pendiente) + '</td></tr>'; });
+  $('out').innerHTML = h + '</table>';
+}
+Comun.init(T, calc);
+</script>
+<script data-goatcounter="https://robotarm.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

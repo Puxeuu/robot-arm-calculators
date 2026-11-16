@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de interés compuesto con aportaciones mensuales</title>
+<link rel="canonical" href="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-interes-compuesto/">
+<meta name="description" content="Calcula cuánto crecerá tu dinero con interés compuesto: capital inicial, aportación mensual, rentabilidad anual y años. Con tabla año a año.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Calculadora de interés compuesto con aportaciones mensuales">
+<meta property="og:description" content="Calcula cuánto crecerá tu dinero con interés compuesto: capital inicial, aportación mensual, rentabilidad anual y años. Con tabla año a año.">
+<meta property="og:url" content="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-interes-compuesto/">
+<link rel="stylesheet" href="../estilo.css">
+</head>
+<body>
+<main>
+<nav><a href="../" data-i="home">Todas las calculadoras</a></nav>
+<div class="top">
+  <div><h1 data-i="h1">Calculadora de interés compuesto</h1><p class="sub" data-i="sub">Cuánto crece tu ahorro con aportaciones mensuales y rentabilidad anual.</p></div>
+  <select id="lang" aria-label="Idioma / Idioma"><option value="es">Español</option><option value="ca">Català</option></select>
+</div>
+<div class="card"><div class="grid"><label><span data-i="ini">Capital inicial (€)</span><input id="ini" type="number" step="any" value="5000" min="0"></label><label><span data-i="apo">Aportación mensual (€)</span><input id="apo" type="number" step="any" value="200" min="0"></label><label><span data-i="tas">Rentabilidad anual (%)</span><input id="tas" type="number" step="any" value="5" min="0"></label><label><span data-i="anys">Años</span><input id="anys" type="number" step="any" value="20" min="1"></label></div></div>
+<div class="card" id="out"></div>
+<h2 data-i="howto">Cómo se calcula</h2>
+<div class="card small" data-h="doc"><p>Cada mes: saldo = saldo·(1 + r) + aportación, con r = rentabilidad anual/12 (capitalización mensual, aportación a final de mes). La rentabilidad se supone constante.</p><p>No descuenta impuestos, comisiones ni inflación, y las rentabilidades reales fluctúan: es una proyección, no una promesa de resultado.</p></div>
+<footer data-i="disclaimer">Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.</footer>
+</main>
+<script src="../comun.js"></script>
+<script src="../calculos.js"></script>
+<script>
+var T = {"es":{"home":"Todas las calculadoras","disclaimer":"Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.","howto":"Cómo se calcula","results":"Resultado","year":"Año","h1":"Calculadora de interés compuesto","sub":"Cuánto crece tu ahorro con aportaciones mensuales y rentabilidad anual.","ini":"Capital inicial (€)","apo":"Aportación mensual (€)","tas":"Rentabilidad anual (%)","anys":"Años","fin":"Capital final","aport":"Total aportado","ints":"Intereses ganados","saldo":"Saldo","doc":"<p>Cada mes: saldo = saldo·(1 + r) + aportación, con r = rentabilidad anual/12 (capitalización mensual, aportación a final de mes). La rentabilidad se supone constante.</p><p>No descuenta impuestos, comisiones ni inflación, y las rentabilidades reales fluctúan: es una proyección, no una promesa de resultado.</p>"},"ca":{"home":"Totes les calculadores","disclaimer":"Eina informativa. Els resultats són orientatius i no substitueixen l'assessorament d'un professional. Les normes poden canviar.","howto":"Com es calcula","results":"Resultat","year":"Any","h1":"Calculadora d'interès compost","sub":"Quant creix el teu estalvi amb aportacions mensuals i rendibilitat anual.","ini":"Capital inicial (€)","apo":"Aportació mensual (€)","tas":"Rendibilitat anual (%)","anys":"Anys","fin":"Capital final","aport":"Total aportat","ints":"Interessos guanyats","saldo":"Saldo","doc":"<p>Cada mes: saldo = saldo·(1 + r) + aportació, amb r = rendibilitat anual/12 (capitalització mensual, aportació a final de mes). La rendibilitat se suposa constant.</p><p>No descompta impostos, comissions ni inflació, i les rendibilitats reals fluctuen: és una projecció, no una promesa de resultat.</p>"}};
+var $ = Comun.$, num = Comun.num, eur = Comun.eur, fn = Comun.n, t = Comun.t;
+function kv(k, v) { return '<div class="kv"><span>' + k + '</span><b>' + v + '</b></div>'; }
+function calc() {
+  var r = Calc.interesCompuesto(Math.max(0, num('ini', 0)), Math.max(0, num('apo', 0)), Math.max(0, num('tas', 0)), Math.max(1, num('anys', 1)));
+  var h = '<div class="small">' + t('fin') + '</div><div class="big">' + eur(r.final) + '</div>' + kv(t('aport'), eur(r.aportado)) + kv(t('ints'), eur(r.intereses));
+  h += '<table style="margin-top:10px"><tr><th>' + t('year') + '</th><th>' + t('aport') + '</th><th>' + t('saldo') + '</th></tr>';
+  r.years.forEach(function (a) { h += '<tr><td>' + a.year + '</td><td>' + eur(a.aportado) + '</td><td>' + eur(a.saldo) + '</td></tr>'; });
+  $('out').innerHTML = h + '</table>';
+}
+Comun.init(T, calc);
+</script>
+<script data-goatcounter="https://robotarm.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

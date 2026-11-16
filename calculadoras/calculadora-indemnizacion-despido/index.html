@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de indemnización por despido (33, 45 y 20 días por año)</title>
+<link rel="canonical" href="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-indemnizacion-despido/">
+<meta name="description" content="Calcula la indemnización por despido improcedente (33 días por año, 45 antes de 2012) o por despido objetivo (20 días por año) con los topes legales.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Calculadora de indemnización por despido (33, 45 y 20 días por año)">
+<meta property="og:description" content="Calcula la indemnización por despido improcedente (33 días por año, 45 antes de 2012) o por despido objetivo (20 días por año) con los topes legales.">
+<meta property="og:url" content="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-indemnizacion-despido/">
+<link rel="stylesheet" href="../estilo.css">
+</head>
+<body>
+<main>
+<nav><a href="../" data-i="home">Todas las calculadoras</a></nav>
+<div class="top">
+  <div><h1 data-i="h1">Calculadora de indemnización por despido</h1><p class="sub" data-i="sub">Despido improcedente (33/45 días por año) y despido objetivo (20 días por año), con topes.</p></div>
+  <select id="lang" aria-label="Idioma / Idioma"><option value="es">Español</option><option value="ca">Català</option></select>
+</div>
+<div class="card"><div class="grid">
+<label><span data-i="ini">Fecha de inicio del contrato</span><input id="ini" type="date" value="2018-01-15"></label>
+<label><span data-i="fin">Fecha del despido</span><input id="fin" type="date"></label>
+<label><span data-i="sal">Salario bruto anual (€, con pagas extra)</span><input id="sal" type="number" step="any" value="30000" min="0"></label>
+<label><span data-i="tipo">Tipo de despido</span><select id="tipo"><option value="improcedente" data-i="imp">Improcedente</option><option value="objetivo" data-i="obj">Objetivo (causas económicas, técnicas...)</option></select></label>
+<label><span data-i="vac">Vacaciones pendientes (días)</span><input id="vac" type="number" step="any" value="0" min="0"></label></div></div>
+<div class="card" id="out"></div>
+<h2 data-i="howto">Cómo se calcula</h2>
+<div class="card small" data-h="doc"><p><b>Despido improcedente (art. 56 ET):</b> 33 días de salario por año trabajado desde el 12-02-2012 y 45 días por año hasta el 11-02-2012, con un máximo de 720 días (24 mensualidades). Si el tramo anterior a 2012 ya supera 720 días, se aplica solo ese tramo, con un máximo de 1.260 días (42 mensualidades).</p><p><b>Despido objetivo (art. 53.1.b ET):</b> 20 días por año, máximo 360 días (12 mensualidades).</p><p>Salario diario = salario bruto anual / 365; la antigüedad se prorratea por días/365 (en la práctica se prorratea por meses, por lo que puede haber pequeñas diferencias). Las vacaciones pendientes se valoran a salario diario.</p><p><b>No incluye</b> salarios pendientes, partes proporcionales de pagas, ni mejoras de convenio colectivo o contrato, que pueden aumentar la cantidad. El finiquito no es la indemnización. Consulta tu convenio o a un abogado laboralista.</p></div>
+<footer data-i="disclaimer">Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.</footer>
+</main>
+<script src="../comun.js"></script>
+<script src="../calculos.js"></script>
+<script>
+var T = {"es":{"home":"Todas las calculadoras","disclaimer":"Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.","howto":"Cómo se calcula","results":"Resultado","year":"Año","h1":"Calculadora de indemnización por despido","sub":"Despido improcedente (33/45 días por año) y despido objetivo (20 días por año), con topes.","ini":"Fecha de inicio del contrato","fin":"Fecha del despido","sal":"Salario bruto anual (€, con pagas extra)","tipo":"Tipo de despido","imp":"Improcedente","obj":"Objetivo (causas económicas, técnicas...)","vac":"Vacaciones pendientes (días)","sd":"Salario diario","ant":"Antigüedad","anios":"años","dias":"días de indemnización","ind":"Indemnización","vacs":"Vacaciones pendientes","tope":"Se ha aplicado el tope legal.","solo":"Con más de 720 días generados antes del 12-02-2012, se aplica solo ese tramo (máximo 42 mensualidades).","fecha":"Revisa las fechas.","tv":"Indemnización + vacaciones","doc":"<p><b>Despido improcedente (art. 56 ET):</b> 33 días de salario por año trabajado desde el 12-02-2012 y 45 días por año hasta el 11-02-2012, con un máximo de 720 días (24 mensualidades). Si el tramo anterior a 2012 ya supera 720 días, se aplica solo ese tramo, con un máximo de 1.260 días (42 mensualidades).</p><p><b>Despido objetivo (art. 53.1.b ET):</b> 20 días por año, máximo 360 días (12 mensualidades).</p><p>Salario diario = salario bruto anual / 365; la antigüedad se prorratea por días/365 (en la práctica se prorratea por meses, por lo que puede haber pequeñas diferencias). Las vacaciones pendientes se valoran a salario diario.</p><p><b>No incluye</b> salarios pendientes, partes proporcionales de pagas, ni mejoras de convenio colectivo o contrato, que pueden aumentar la cantidad. El finiquito no es la indemnización. Consulta tu convenio o a un abogado laboralista.</p>"},"ca":{"home":"Totes les calculadores","disclaimer":"Eina informativa. Els resultats són orientatius i no substitueixen l'assessorament d'un professional. Les normes poden canviar.","howto":"Com es calcula","results":"Resultat","year":"Any","h1":"Calculadora d'indemnització per acomiadament","sub":"Acomiadament improcedent (33/45 dies per any) i objectiu (20 dies per any), amb topalls.","ini":"Data d'inici del contracte","fin":"Data de l'acomiadament","sal":"Salari brut anual (€, amb pagues extra)","tipo":"Tipus d'acomiadament","imp":"Improcedent","obj":"Objectiu (causes econòmiques, tècniques...)","vac":"Vacances pendents (dies)","sd":"Salari diari","ant":"Antiguitat","anios":"anys","dias":"dies d'indemnització","ind":"Indemnització","vacs":"Vacances pendents","tope":"S'ha aplicat el topall legal.","solo":"Amb més de 720 dies generats abans del 12-02-2012, s'aplica només aquest tram (màxim 42 mensualitats).","fecha":"Revisa les dates.","tv":"Indemnització + vacances","doc":"<p><b>Acomiadament improcedent (art. 56 ET):</b> 33 dies de salari per any treballat des del 12-02-2012 i 45 dies per any fins al 11-02-2012, amb un màxim de 720 dies (24 mensualitats). Si el tram anterior al 2012 ja supera 720 dies, s'aplica només aquest tram, amb un màxim de 1.260 dies (42 mensualitats).</p><p><b>Acomiadament objectiu (art. 53.1.b ET):</b> 20 dies per any, màxim 360 dies (12 mensualitats).</p><p>Salari diari = salari brut anual / 365; l'antiguitat es prorrateja per dies/365 (a la pràctica es prorrateja per mesos, per això pot haver-hi petites diferències). Les vacances pendents es valoren a salari diari.</p><p><b>No inclou</b> salaris pendents, parts proporcionals de pagues, ni millores de conveni col·lectiu o contracte, que poden augmentar la quantitat. El finiquito no és la indemnització. Consulta el teu conveni o un advocat laboralista.</p>"}};
+var $ = Comun.$, num = Comun.num, eur = Comun.eur, fn = Comun.n, t = Comun.t;
+function kv(k, v) { return '<div class="kv"><span>' + k + '</span><b>' + v + '</b></div>'; }
+if (!$('fin').value) { var d = new Date(); $('fin').value = d.toISOString().slice(0, 10); }
+function utc(s) { var p = s.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]); }
+function calc() {
+  var a = $('ini').value, b = $('fin').value;
+  if (!a || !b || utc(b) < utc(a)) { $('out').innerHTML = '<div class="warn">' + t('fecha') + '</div>'; return; }
+  var r = Calc.despido(utc(a), utc(b), Math.max(0, num('sal', 0)), $('tipo').value);
+  var vac = Math.max(0, num('vac', 0)) * r.salarioDiario;
+  var y = Math.floor(r.antiguedadDias / 365), dd = r.antiguedadDias - y * 365;
+  var h = '<div class="small">' + t('ind') + '</div><div class="big">' + eur(r.indemnizacion) + '</div>';
+  h += kv(t('sd'), eur(r.salarioDiario)) + kv(t('ant'), y + ' ' + t('anios') + ' + ' + dd + ' d') + kv(fn(r.diasIndemnizacion, 1) + ' ' + t('dias'), eur(r.indemnizacion));
+  if (vac > 0) h += kv(t('vacs'), eur(vac)) + kv(t('tv'), eur(r.indemnizacion + vac));
+  if (r.soloPre) h += '<p class="small">' + t('solo') + '</p>';
+  if (r.topeAplicado) h += '<p class="warn small">' + t('tope') + '</p>';
+  $('out').innerHTML = h;
+}
+$('tipo').onchange = calc;
+Comun.init(T, calc);
+</script>
+<script data-goatcounter="https://robotarm.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
