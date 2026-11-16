@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Robot Arm Torque Calculator (air &amp; underwater)</title>
+<link rel="canonical" href="https://puxeuu.github.io/robot-arm-calculators/torque-calculator/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Robot Arm Torque Calculator (air &amp; underwater)">
+<meta property="og:description" content="Free static torque calculator for multi-joint robot arms. Includes payload, safety factor and buoyancy for underwater arms. Results in N·m, kgf·cm and oz·in.">
+<meta property="og:url" content="https://puxeuu.github.io/robot-arm-calculators/torque-calculator/">
 <meta name="description" content="Free static torque calculator for multi-joint robot arms. Includes payload, safety factor and buoyancy for underwater arms. Results in N·m, kgf·cm and oz·in.">
 <style>
 :root{--bg:#fff;--fg:#1b1f24;--mut:#5b6672;--card:#f4f6f8;--line:#d8dee4;--acc:#0b6bcb;--bad:#c2410c}
@@ -36,29 +41,29 @@ svg{width:100%;height:auto;background:var(--bg);border:1px solid var(--line);bor
 <body>
 <main>
 <div class="top">
-  <div><h1 data-i="title"></h1><p class="sub" data-i="sub"></p></div>
+  <div><h1 data-i="title">Robot Arm Torque Calculator</h1><p class="sub" data-i="sub">Static joint torque for multi-link arms, with payload and underwater buoyancy.</p></div>
   <select id="lang" aria-label="Language"><option value="en">English</option><option value="ca">Català</option><option value="es">Español</option></select>
 </div>
 
 <div class="card">
   <div class="grid">
-    <label><span data-i="medium"></span>
-      <select id="medium"><option value="1.2" data-i="air"></option><option value="1000" data-i="fresh"></option><option value="1025" data-i="sea"></option></select></label>
-    <label><span data-i="sf"></span><input id="sf" type="number" step="0.1" min="1" value="1.5"></label>
-    <label><span data-i="payload"></span><input id="pm" type="number" min="0" value="200"></label>
-    <label><span data-i="paydens"></span><input id="pr" type="number" min="0" value="2700"></label>
+    <label><span data-i="medium">Medium</span>
+      <select id="medium"><option value="1.2" data-i="air">Air</option><option value="1000" data-i="fresh">Fresh water</option><option value="1025" data-i="sea">Sea water</option></select></label>
+    <label><span data-i="sf">Safety factor</span><input id="sf" type="number" step="0.1" min="1" value="1.5"></label>
+    <label><span data-i="payload">Payload mass at tip (g)</span><input id="pm" type="number" min="0" value="200"></label>
+    <label><span data-i="paydens">Payload density (kg/m³, 0 = ignore buoyancy)</span><input id="pr" type="number" min="0" value="2700"></label>
   </div>
 </div>
 
-<h2 data-i="links"></h2>
+<h2 data-i="links">Links</h2>
 <div id="links"></div>
 <div class="btns">
-  <button id="add" data-i="add"></button>
-  <button id="ex1" data-i="ex1"></button>
-  <button id="ex2" data-i="ex2"></button>
+  <button id="add" data-i="add">+ Add link</button>
+  <button id="ex1" data-i="ex1">Example: underwater 3-link arm</button>
+  <button id="ex2" data-i="ex2">Example: light desk arm</button>
 </div>
 
-<h2 data-i="results"></h2>
+<h2 data-i="results">Results</h2>
 <div class="card">
   <div id="summary"></div>
   <table id="tbl"></table>
@@ -68,8 +73,8 @@ svg{width:100%;height:auto;background:var(--bg);border:1px solid var(--line);bor
   <div><svg id="chart" viewBox="0 0 400 300" role="img"></svg></div>
 </div>
 
-<h2 data-i="howto"></h2>
-<div class="card small" id="doc"></div>
+<h2 data-i="howto">How it works</h2>
+<div class="card small" id="doc"><p><b>Model:</b> planar arm in the XY plane, X horizontal, Y up, Z toward the viewer (right-hand rule). Angles are absolute from the horizontal (+X), positive counter-clockwise. Each link has its centre of mass at the given % of its length.</p><p><b>Formula:</b> holding torque at joint i = Σ (net weight of every link and payload beyond the joint × horizontal distance to the joint). Net weight = (m − ρ<sub>medium</sub>·m/ρ<sub>body</sub>)·g, with g = 9.80665 m/s². The safety factor multiplies the result.</p><p><b>Not included:</b> dynamic loads (acceleration, drag, water added mass), friction, gearbox efficiency and cable forces. Use a generous safety factor (1.5–2.5), and more underwater. Density is the equivalent solid density of each link (hollow or with motors inside: use mass / displaced volume).</p><p><b>Units:</b> inputs in mm, g, degrees; internal SI (m, kg, rad, N·m). 1 N·m = 10.197 kgf·cm = 141.6 oz·in.</p><p>Need joint angles for a target point? Try the <a href='../ik-calculator/'>inverse kinematics calculator</a>. Sizing the motor? Use the <a href='../gear-calculator/'>gear ratio calculator</a>.</p></div>
 </main>
 
 <script src="calc.js"></script>

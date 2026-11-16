@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gear Ratio and Motor Calculator (torque, speed, power)</title>
+<link rel="canonical" href="https://puxeuu.github.io/robot-arm-calculators/gear-calculator/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Gear Ratio and Motor Calculator (torque, speed, power)">
+<meta property="og:description" content="Free calculator for a DC motor with a gearbox: output torque, speed and power, operating point under load, and the gear ratio you need for a given torque.">
+<meta property="og:url" content="https://puxeuu.github.io/robot-arm-calculators/gear-calculator/">
 <meta name="description" content="Free calculator for a DC motor with a gearbox: output torque, speed and power, operating point under load, and the gear ratio you need for a given torque.">
 <style>
 :root{--bg:#fff;--fg:#1b1f24;--mut:#5b6672;--card:#f4f6f8;--line:#d8dee4;--acc:#0b6bcb;--bad:#c2410c}
@@ -29,32 +34,32 @@ a{color:var(--acc)}
 <body>
 <main>
 <div class="top">
-  <div><h1 data-i="title"></h1><p class="sub" data-i="sub"></p></div>
+  <div><h1 data-i="title">Gear Ratio and Motor Calculator</h1><p class="sub" data-i="sub">DC motor with a gearbox: output torque, speed and power, and the ratio you need.</p></div>
   <select id="lang" aria-label="Language"><option value="en">English</option><option value="ca">Català</option><option value="es">Español</option></select>
 </div>
 
-<h2 data-i="h1"></h2>
+<h2 data-i="h1">Motor with gearbox</h2>
 <div class="card"><div class="grid">
-  <label><span data-i="ts"></span><input id="Ts" type="number" min="0" step="any" value="0.5"></label>
-  <label><span data-i="n0"></span><input id="n0" type="number" min="1" value="6000"></label>
-  <label><span data-i="ratio"></span><input id="ratio" type="number" min="1" step="any" value="50"></label>
-  <label><span data-i="eff"></span><input id="eff" type="number" min="1" max="100" value="80"></label>
-  <label><span data-i="tl"></span><input id="Tl" type="number" min="0" step="any" value="10"></label>
+  <label><span data-i="ts">Motor stall torque (N·m)</span><input id="Ts" type="number" min="0" step="any" value="0.5"></label>
+  <label><span data-i="n0">Motor no-load speed (rpm)</span><input id="n0" type="number" min="1" value="6000"></label>
+  <label><span data-i="ratio">Gear ratio (x:1)</span><input id="ratio" type="number" min="1" step="any" value="50"></label>
+  <label><span data-i="eff">Gearbox efficiency (%)</span><input id="eff" type="number" min="1" max="100" value="80"></label>
+  <label><span data-i="tl">Load torque at output (N·m)</span><input id="Tl" type="number" min="0" step="any" value="10"></label>
 </div></div>
 <div class="twocol">
   <div class="card" id="res"></div>
   <div><svg id="chart" viewBox="0 0 400 300" role="img"></svg></div>
 </div>
 
-<h2 data-i="h2"></h2>
+<h2 data-i="h2">Ratio you need</h2>
 <div class="card"><div class="grid">
-  <label><span data-i="treq"></span><input id="Treq" type="number" min="0" step="any" value="10"></label>
-  <label><span data-i="tc"></span><input id="Tc" type="number" min="0.0001" step="any" value="0.1"></label>
-  <label><span data-i="sf"></span><input id="sf" type="number" min="1" step="0.1" value="1.5"></label>
+  <label><span data-i="treq">Torque needed at the joint (N·m)</span><input id="Treq" type="number" min="0" step="any" value="10"></label>
+  <label><span data-i="tc">Motor continuous torque (N·m)</span><input id="Tc" type="number" min="0.0001" step="any" value="0.1"></label>
+  <label><span data-i="sf">Safety factor</span><input id="sf" type="number" min="1" step="0.1" value="1.5"></label>
 </div><p class="big" id="req" style="margin:10px 0 0"></p></div>
 
-<h2 data-i="howto"></h2>
-<div class="card small" id="doc"></div>
+<h2 data-i="howto">How it works</h2>
+<div class="card small" id="doc"><p><b>Model:</b> the DC motor follows a straight torque-speed line from stall torque (zero speed) to no-load speed (zero torque). A gearbox of ratio i with efficiency η gives T<sub>out</sub> = T<sub>motor</sub>·i·η and n<sub>out</sub> = n<sub>motor</sub>/i. The efficiency is applied to torque only.</p><p><b>Operating point:</b> for a load torque T<sub>L</sub> the motor torque is T<sub>L</sub>/(i·η) and its speed is n<sub>0</sub>·(1 − T<sub>motor</sub>/T<sub>stall</sub>). Power out = T<sub>L</sub>·ω<sub>out</sub>.</p><p><b>Ratio you need:</b> i = T·SF / (T<sub>cont</sub>·η). Use the <em>continuous</em> torque of the motor, not the stall torque, or it will overheat. Take the torque from the <a href='../torque-calculator/'>joint torque calculator</a>.</p><p>Not included: friction, inertia, backlash, thermal limits and supply voltage sag. Units: N·m, rpm, W.</p></div>
 </main>
 <script src="gear.js"></script>
 <script>
