@@ -5,7 +5,7 @@
   // ---------- Hipoteca / prestec (sistema frances, quota constant) ----------
   // capital (EUR), tinAnual (%), anys. Retorna quota, totals i quadre anual.
   function hipoteca(capital, tinAnual, anys) {
-    var n = Math.round(anys * 12), r = tinAnual / 100 / 12;
+    var n = Math.min(1200, Math.max(1, Math.round(anys * 12))), r = tinAnual / 100 / 12; // maxim 100 anys
     var cuota = r === 0 ? capital / n : capital * r / (1 - Math.pow(1 + r, -n));
     var saldo = capital, totInt = 0, years = [], yi = 0, yp = 0;
     for (var m = 1; m <= n; m++) {
@@ -36,7 +36,7 @@
   // ---------- Interes compuesto con aportacion mensual ----------
   // inicial (EUR), aportMensual (EUR), tasaAnual (%, nominal, capitalizacion mensual), anys
   function interesCompuesto(inicial, aportMensual, tasaAnual, anys) {
-    var r = tasaAnual / 100 / 12, n = Math.round(anys * 12);
+    var r = tasaAnual / 100 / 12, n = Math.min(1200, Math.max(1, Math.round(anys * 12))); // maxim 100 anys
     var saldo = inicial, aportado = inicial, years = [];
     for (var m = 1; m <= n; m++) {
       saldo = saldo * (1 + r) + aportMensual;
@@ -123,7 +123,8 @@
   // TAE: tipus anual equivalent amb els fluxos: rep (P - comissio) i paga la quota mensual.
   // No inclou assegurances ni altres despeses.
   function prestamo(P, tin, meses, comPct) {
-    var h = hipoteca(P, tin, meses / 12), com = P * comPct / 100, neto = P - com, n = Math.round(meses);
+    meses = Math.min(1200, Math.max(1, Math.round(meses)));
+    var h = hipoteca(P, tin, meses / 12), com = P * comPct / 100, neto = P - com, n = meses;
     var lo = 1e-9, hi = 1;
     function f(i) { return h.cuota * (1 - Math.pow(1 + i, -n)) / i - neto; }
     var tae = 0;

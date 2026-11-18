@@ -23,3 +23,7 @@ footer{margin:28px 0 8px;font-size:.82rem;color:var(--mut)}
 .lista a.t{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0;text-decoration:none;color:var(--fg)}
 .lista a.t:hover{border-color:var(--acc)}.lista a.t b{display:block;color:var(--acc)}.lista a.t span{color:var(--mut);font-size:.92rem}
 #lang{width:auto}
+.mig{font-size:.88rem;color:var(--mut);margin-bottom:8px}
+.mig a{color:var(--mut)}.mig a:hover{color:var(--acc)}
+.filtro{width:100%;margin:6px 0 4px;padding:9px 12px;font-size:1rem}
+.grupo h2{margin-top:26px}

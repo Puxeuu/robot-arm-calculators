@@ -20,9 +20,9 @@ h1{font-size:1.6rem;margin:.2em 0}h2{font-size:1.15rem;margin:1.4em 0 .5em}
 .sub{color:var(--mut);margin:0 0 12px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:10px}
 label{display:flex;flex-direction:column;font-size:.8rem;color:var(--mut);gap:3px}
-input,select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;min-width:0}
+input,select{width:100%;font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;min-width:0}
 table{width:100%;border-collapse:collapse;font-size:.92rem}
 th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}
 th{color:var(--mut);font-weight:600}
@@ -31,10 +31,12 @@ th{color:var(--mut);font-weight:600}
 svg{width:100%;height:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px}
 .twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:700px){.twocol{grid-template-columns:1fr}}
 a{color:var(--acc)}
+.card{overflow-x:auto}
 </style>
 </head>
 <body>
 <main>
+<nav style="font-size:.9rem;margin-bottom:6px"><a href="../" style="color:var(--acc)">← All tools</a></nav>
 <div class="top">
   <div><h1 data-i="title">2-Link Arm Inverse Kinematics Calculator</h1><p class="sub" data-i="sub">Planar arm: joint angles for a target point, with both elbow solutions and a forward-kinematics check.</p></div>
   <select id="lang" aria-label="Language"><option value="en">English</option><option value="ca">Català</option><option value="es">Español</option></select>
