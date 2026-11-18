@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo quitar el IVA de un precio (21 %, 10 % y 4 %)</title>
+<link rel="canonical" href="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-quitar-iva/">
+<meta name="description" content="Calcula la base imponible a partir de un precio con IVA incluido: divide entre 1,21, 1,10 o 1,04. Con ejemplos y el error más habitual.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cómo quitar el IVA de un precio (21 %, 10 % y 4 %)">
+<meta property="og:description" content="Calcula la base imponible a partir de un precio con IVA incluido: divide entre 1,21, 1,10 o 1,04. Con ejemplos y el error más habitual.">
+<meta property="og:url" content="https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-quitar-iva/">
+<link rel="stylesheet" href="../estilo.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230b6bcb%27/%3E%3Cpath d=%27M9 22h14M9 16h14M9 10h14%27 stroke=%27white%27 stroke-width=%273%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo se quita el IVA de un precio?","acceptedAnswer":{"@type":"Answer","text":"Divide el precio con IVA entre 1,21 (si es del 21 %), 1,10 (10 %) o 1,04 (4 %). El resultado es la base imponible."}},{"@type":"Question","name":"¿Por qué no basta con restar el 21 %?","acceptedAnswer":{"@type":"Answer","text":"Porque el 21 % se calcula sobre la base, no sobre el total. Si a 121 € le restas el 21 % (25,41 €) obtienes 95,59 €, y la base real es 100 €."}},{"@type":"Question","name":"¿Cuánto IVA lleva un precio de 242 € al 21 %?","acceptedAnswer":{"@type":"Answer","text":"La base es 242 / 1,21 = 200 €, así que el IVA es 42 €."}},{"@type":"Question","name":"¿Y con IVA del 10 % o del 4 %?","acceptedAnswer":{"@type":"Answer","text":"Con el 10 %, 110 € incluyen 100 € de base y 10 € de IVA. Con el 4 %, 104 € incluyen 100 € de base y 4 € de IVA."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Cómo quitar el IVA de un precio (21 %, 10 % y 4 %)","url":"https://puxeuu.github.io/robot-arm-calculators/calculadoras/calculadora-quitar-iva/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","inLanguage":["es","ca"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}}</script>
+</head>
+<body>
+<main>
+<nav><a href="../" data-i="home">Todas las calculadoras</a></nav>
+<div class="top">
+  <div><h1 data-i="h1">Cómo quitar el IVA de un precio</h1><p class="sub" data-i="sub">De un precio con IVA incluido a la base imponible, al 21 %, 10 % o 4 %.</p></div>
+  <select id="lang" aria-label="Idioma / Idioma"><option value="es">Español</option><option value="ca">Català</option></select>
+</div>
+<div class="card"><div class="grid">
+<label><span data-i="modo">Qué quieres hacer</span><select id="modo"><option value="add" data-i="add">Añadir IVA (tengo la base)</option><option value="rem" data-i="rem" selected>Quitar IVA (tengo el total)</option></select></label>
+<label><span data-i="imp">Importe (€)</span><input id="imp" type="number" step="any" value="121" min="0"></label>
+<label><span data-i="tipo">Tipo de IVA</span><select id="tipo"><option value="21">21 %</option><option value="10">10 %</option><option value="4">4 %</option></select></label>
+</div></div><div class="card" id="out"></div>
+<h2 data-i="ejT">Tabla de ejemplos</h2><div class="card"><div id="tabla"></div></div>
+<h2 data-i="artT">Preguntas frecuentes</h2>
+<div class="card small" data-h="art"><h3>¿Cómo se quita el IVA de un precio?</h3><p>Divide el precio con IVA entre 1,21 (si es del 21 %), 1,10 (10 %) o 1,04 (4 %). El resultado es la base imponible.</p><h3>¿Por qué no basta con restar el 21 %?</h3><p>Porque el 21 % se calcula sobre la base, no sobre el total. Si a 121 € le restas el 21 % (25,41 €) obtienes 95,59 €, y la base real es 100 €.</p><h3>¿Cuánto IVA lleva un precio de 242 € al 21 %?</h3><p>La base es 242 / 1,21 = 200 €, así que el IVA es 42 €.</p><h3>¿Y con IVA del 10 % o del 4 %?</h3><p>Con el 10 %, 110 € incluyen 100 € de base y 10 € de IVA. Con el 4 %, 104 € incluyen 100 € de base y 4 € de IVA.</p></div>
+<h2 data-i="howto">Cómo se calcula</h2>
+<div class="card small" data-h="doc"><p>Para quitar el IVA se divide el precio con IVA entre 1 + tipo/100: entre 1,21 al 21 %, entre 1,10 al 10 % y entre 1,04 al 4 %. El IVA es la diferencia entre el total y la base. Ejemplo: 242 € con IVA del 21 % son 242 / 1,21 = 200 € de base y 42 € de IVA.</p><p>El error más habitual es restar el 21 % del total (242 × 0,21 = 50,82): no da la base correcta, porque el IVA se calcula sobre la base, no sobre el total.</p></div>
+<h2 data-i="relT">Otras calculadoras</h2>
+<div class="card" data-h="rel"><a href="../calculadora-iva-21/">IVA del 21 %</a> · <a href="../calculadora-iva-10/">IVA del 10 %</a> · <a href="../calculadora-iva-4/">IVA del 4 %</a></div>
+<footer><span data-i="disclaimer">Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.</span> · <a href="../privacidad/" data-i="priv">Privacidad</a></footer>
+</main>
+<script src="../comun.js"></script>
+<script src="../calculos.js"></script>
+<script>
+var T = {"es":{"priv":"Privacidad","home":"Todas las calculadoras","disclaimer":"Herramienta informativa. Los resultados son orientativos y no sustituyen el asesoramiento de un profesional. Las normas pueden cambiar.","howto":"Cómo se calcula","results":"Resultado","year":"Año","imp":"Importe (€)","modo":"Qué quieres hacer","add":"Añadir IVA (tengo la base)","rem":"Quitar IVA (tengo el total)","tipo":"Tipo de IVA","base":"Base imponible","iva":"IVA","total":"Total con IVA","ejT":"Tabla de ejemplos","cB":"Base","cI":"IVA","cT":"Total","h1":"Cómo quitar el IVA de un precio","sub":"De un precio con IVA incluido a la base imponible, al 21 %, 10 % o 4 %.","doc":"<p>Para quitar el IVA se divide el precio con IVA entre 1 + tipo/100: entre 1,21 al 21 %, entre 1,10 al 10 % y entre 1,04 al 4 %. El IVA es la diferencia entre el total y la base. Ejemplo: 242 € con IVA del 21 % son 242 / 1,21 = 200 € de base y 42 € de IVA.</p><p>El error más habitual es restar el 21 % del total (242 × 0,21 = 50,82): no da la base correcta, porque el IVA se calcula sobre la base, no sobre el total.</p>","art":"<h3>¿Cómo se quita el IVA de un precio?</h3><p>Divide el precio con IVA entre 1,21 (si es del 21 %), 1,10 (10 %) o 1,04 (4 %). El resultado es la base imponible.</p><h3>¿Por qué no basta con restar el 21 %?</h3><p>Porque el 21 % se calcula sobre la base, no sobre el total. Si a 121 € le restas el 21 % (25,41 €) obtienes 95,59 €, y la base real es 100 €.</p><h3>¿Cuánto IVA lleva un precio de 242 € al 21 %?</h3><p>La base es 242 / 1,21 = 200 €, así que el IVA es 42 €.</p><h3>¿Y con IVA del 10 % o del 4 %?</h3><p>Con el 10 %, 110 € incluyen 100 € de base y 10 € de IVA. Con el 4 %, 104 € incluyen 100 € de base y 4 € de IVA.</p>","rel":"<a href=\"../calculadora-iva-21/\">IVA del 21 %</a> · <a href=\"../calculadora-iva-10/\">IVA del 10 %</a> · <a href=\"../calculadora-iva-4/\">IVA del 4 %</a>","relT":"Otras calculadoras","artT":"Preguntas frecuentes"},"ca":{"priv":"Privadesa","home":"Totes les calculadores","disclaimer":"Eina informativa. Els resultats són orientatius i no substitueixen l'assessorament d'un professional. Les normes poden canviar.","howto":"Com es calcula","results":"Resultat","year":"Any","imp":"Import (€)","modo":"Què vols fer","add":"Afegir IVA (tinc la base)","rem":"Treure IVA (tinc el total)","tipo":"Tipus d'IVA","base":"Base imposable","iva":"IVA","total":"Total amb IVA","ejT":"Taula d'exemples","cB":"Base","cI":"IVA","cT":"Total","h1":"Com treure l'IVA d'un preu","sub":"D'un preu amb IVA inclòs a la base imposable, al 21 %, 10 % o 4 %.","doc":"<p>Per treure l'IVA es divideix el preu amb IVA entre 1 + tipus/100: entre 1,21 al 21 %, entre 1,10 al 10 % i entre 1,04 al 4 %. L'IVA és la diferència entre el total i la base. Exemple: 242 € amb IVA del 21 % són 242 / 1,21 = 200 € de base i 42 € d'IVA.</p><p>L'error més habitual és restar el 21 % del total (242 × 0,21 = 50,82): no dona la base correcta, perquè l'IVA es calcula sobre la base, no sobre el total.</p>","art":"<h3>Com es treu l'IVA d'un preu?</h3><p>Divideix el preu amb IVA entre 1,21 (si és del 21 %), 1,10 (10 %) o 1,04 (4 %). El resultat és la base imposable.</p><h3>Per què no n'hi ha prou amb restar el 21 %?</h3><p>Perquè el 21 % es calcula sobre la base, no sobre el total. Si a 121 € li restes el 21 % (25,41 €) obtens 95,59 €, i la base real és 100 €.</p><h3>Quant IVA du un preu de 242 € al 21 %?</h3><p>La base és 242 / 1,21 = 200 €, així que l'IVA és 42 €.</p><h3>I amb IVA del 10 % o del 4 %?</h3><p>Amb el 10 %, 110 € inclouen 100 € de base i 10 € d'IVA. Amb el 4 %, 104 € inclouen 100 € de base i 4 € d'IVA.</p>","rel":"<a href=\"../calculadora-iva-21/\">IVA del 21 %</a> · <a href=\"../calculadora-iva-10/\">IVA del 10 %</a> · <a href=\"../calculadora-iva-4/\">IVA del 4 %</a>","relT":"Altres calculadores","artT":"Preguntes freqüents"}};
+var $ = Comun.$, num = Comun.num, eur = Comun.eur, fn = Comun.n, t = Comun.t;
+function kv(k, v) { return '<div class="kv"><span>' + k + '</span><b>' + v + '</b></div>'; }
+var FIJO = null;
+function tipo() { return FIJO !== null ? FIJO : +$('tipo').value; }
+$('modo').onchange = calc; if ($('tipo')) $('tipo').onchange = calc;
+function calc() {
+  var imp = Math.max(0, num('imp', 0)), tp = tipo();
+  var r = $('modo').value === 'add' ? Calc.ivaDesdeBase(imp, tp) : Calc.ivaDesdeTotal(imp, tp);
+  $('out').innerHTML = kv(t('base'), eur(r.base)) + kv(t('iva') + ' (' + fn(tp, 0) + ' %)', eur(r.iva)) + '<div class="small" style="margin-top:8px">' + t('total') + '</div><div class="big">' + eur(r.total) + '</div>';
+  var h = '<table><tr><th>' + t('cB') + '</th><th>' + t('cI') + '</th><th>' + t('cT') + '</th></tr>';
+  [10, 20, 50, 100, 200, 500, 1000].forEach(function (v) { var x = Calc.ivaDesdeBase(v, tp); h += '<tr><td>' + eur(x.base) + '</td><td>' + eur(x.iva) + '</td><td>' + eur(x.total) + '</td></tr>'; });
+  $('tabla').innerHTML = h + '</table>';
+}
+Comun.init(T, calc);
+</script>
+<script data-goatcounter="https://robotarm.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
